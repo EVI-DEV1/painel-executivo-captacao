@@ -1,0 +1,2140 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Horizonte · Painel executivo (demonstração)</title>
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#070d1a; --surface:#0f1a30; --surface-2:#14203a; --hover:#1b2a49;
+  --line:#1e2d4d; --ink:#e8eefb; --ink-2:#9fb2d0; --ink-3:#6d81a6;
+  --brand:#06d6a0; --s1:#1a86ff; --s2:#e85a1a; --s3:#04a87d; --s4:#8ea5c7;
+  --fill-on:#1668d6; --fluxo:#eaf4ff;
+  --track:#1c2b4a; --glow:rgba(26,134,255,.20); --glow-forte:rgba(26,134,255,.38);
+  --warn-bg:#2c2415; --warn-ink:#efc98f; --warn-line:#c98500;
+  --shadow:0 22px 60px rgba(0,0,0,.6);
+  --txt-sombra:0 1px 3px rgba(0,0,0,.75);
+  --pista:#0b1424; --pista-borda:#2a3b5f; --faixa:#dbe6f7; --luz-pista:#ffc24a;
+}
+html[data-theme="light"]{
+  color-scheme:light;
+  --bg:#e9eff8; --surface:#ffffff; --surface-2:#f3f7fd; --hover:#e6eefb;
+  --line:#d6e2f2; --ink:#0e2138; --ink-2:#48607d; --ink-3:#6b839f;
+  --brand:#04936c; --s1:#0d6ee0; --s2:#f25c14; --s3:#04936c; --s4:#54708f;
+  --fill-on:#0f62cc; --fluxo:#08356b;
+  --track:#dde8f5; --glow:rgba(13,110,224,.13); --glow-forte:rgba(13,110,224,.24);
+  --warn-bg:#fdf3e2; --warn-ink:#7a5312; --warn-line:#c98500;
+  --shadow:0 18px 50px rgba(16,40,72,.16);
+  --txt-sombra:0 0 3px rgba(255,255,255,.9);
+  --pista:#3a4659; --pista-borda:#55637a; --faixa:#ffffff; --luz-pista:#e09a00;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);
+  font:12.5px/1.45 "Segoe UI",system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
+button,select,input{font:inherit;color:inherit}
+button,select{cursor:pointer}
+h1,h2,h3,h4,p{margin:0}
+a{color:var(--brand);text-decoration:none}
+a:hover{text-decoration:underline}
+:is(button,a,select,input,[tabindex]):focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:6px}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-thumb{background:var(--line);border-radius:6px}
+::-webkit-scrollbar-track{background:transparent}
+
+.app{display:grid;grid-template-rows:auto auto minmax(0,1fr) auto;height:100vh}
+.topbar{display:flex;align-items:center;gap:12px;padding:0 13px;height:44px;
+  background:var(--surface);border-bottom:1px solid var(--line);flex:none}
+.logo{display:flex;align-items:center;gap:7px;font-size:14px;font-weight:750;letter-spacing:-.4px}
+.logo i{width:19px;height:19px;border-radius:6px;background:var(--brand);display:grid;place-items:center;
+  color:#04231b;font-style:normal;font-size:10px;font-weight:800}
+.logo span{color:var(--brand)}
+.vsep{width:1px;height:20px;background:var(--line);flex:none}
+.pickcol{display:flex;flex-direction:column;gap:1px;min-width:0}
+.pickcol .lab{font-size:8.5px;text-transform:uppercase;letter-spacing:1.1px;color:var(--ink-3);font-weight:700}
+.pickcol select{background:transparent;border:0;padding:0;font-size:12px;font-weight:600;color:var(--ink);max-width:180px}
+.spacer{flex:1}
+
+.filterbar{display:flex;align-items:center;gap:8px;padding:7px 13px;
+  background:var(--surface);border-bottom:1px solid var(--line);flex:none;flex-wrap:wrap}
+.search{display:flex;align-items:center;gap:6px;background:var(--surface-2);border:1px solid var(--line);
+  border-radius:7px;padding:4px 9px;min-width:190px;flex:1;max-width:330px}
+.search svg{flex:none;opacity:.55}
+.search input{background:transparent;border:0;outline:0;width:100%;font-size:11.5px}
+.search input::placeholder{color:var(--ink-3)}
+.fgroup{display:flex;align-items:center;gap:5px}
+.fgroup>.lab{font-size:8.5px;text-transform:uppercase;letter-spacing:1.1px;color:var(--ink-3);font-weight:700}
+.pill{background:var(--surface-2);border:1px solid var(--line);border-radius:20px;
+  padding:3px 10px;font-size:10.5px;color:var(--ink-2);white-space:nowrap}
+.pill:hover{border-color:var(--brand);color:var(--ink)}
+.pill[aria-pressed="true"]{background:var(--fill-on);border-color:var(--fill-on);color:#fff}
+.tag{display:inline-flex;align-items:center;gap:5px;background:var(--surface-2);border:1px solid var(--line);
+  border-radius:20px;padding:3px 9px;font-size:10px;color:var(--ink-2);white-space:nowrap}
+.tag b{color:var(--ink);font-weight:650}
+.ghost{background:var(--surface-2);border:1px solid var(--line);border-radius:7px;
+  padding:4px 9px;font-size:10.5px;color:var(--ink-2);white-space:nowrap}
+.ghost:hover{border-color:var(--brand);color:var(--ink)}
+
+.body{display:grid;grid-template-columns:minmax(0,1fr) 288px;min-height:0}
+.canvas{padding:11px 13px 16px;overflow:auto;min-width:0;display:grid;grid-template-rows:auto 1fr auto;gap:9px}
+.botrow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:9px;min-height:0}
+
+.pistapanel{display:flex;flex-direction:column}
+.pista{width:100%;height:112px;display:block;flex:1;min-height:112px;cursor:pointer;overflow:visible}
+
+.ctrlmenu{display:block;width:100%;text-align:left;background:var(--surface-2);border:1px solid var(--line);
+  border-radius:9px;padding:6px 8px 7px}
+.ctrlmenu:hover{border-color:var(--brand);background:var(--hover)}
+.ctrlmenu .cm-row{display:grid;grid-template-columns:18px minmax(0,1fr) auto;gap:6px;align-items:baseline;padding:3px 0;
+  border-bottom:1px solid var(--line);font-size:10.5px}
+.ctrlmenu .cm-row:last-of-type{border-bottom:0}
+.ctrlmenu .cm-row .i{font-size:9px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.ctrlmenu .cm-row.topo .i{color:var(--brand);font-weight:750}
+.ctrlmenu .cm-row .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ctrlmenu .cm-row .nm small{display:block;font-size:8.5px;color:var(--ink-3)}
+.ctrlmenu .cm-row .v{font-weight:700;font-variant-numeric:tabular-nums}
+.ctrlmenu .cm-open{display:block;margin-top:5px;font-size:10px;color:var(--brand);font-weight:650}
+.ov-back{margin-bottom:4px}
+.rank tbody tr.clicavel{cursor:pointer}
+.rank tbody tr.clicavel:hover{background:var(--hover)}
+.botrow .panel,.hero{margin-top:0}
+.tagpanel{display:flex;flex-direction:column;justify-content:center}
+.rail{border-left:1px solid var(--line);background:var(--surface);overflow:auto;padding:0}
+.railsec{padding:10px 11px;border-bottom:1px solid var(--line)}
+.railhead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:7px}
+h2{font-size:11.5px;font-weight:650;letter-spacing:-.05px}
+.hint{font-size:10px;color:var(--ink-3);line-height:1.45}
+
+.stats{display:flex;flex-wrap:wrap;gap:6px;align-items:stretch}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 9px;
+  text-align:left;min-width:0;position:relative;overflow:hidden;width:138px;flex:none}
+.stat:hover{border-color:var(--brand);background:var(--hover)}
+.stat .k{font-size:8.5px;text-transform:uppercase;letter-spacing:.8px;color:var(--ink-3);
+  font-weight:700;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stat .v{font-size:15px;font-weight:700;letter-spacing:-.5px;font-variant-numeric:tabular-nums;
+  line-height:1.15;margin:2px 0 0;display:block}
+.stat .s{font-size:9.5px;color:var(--ink-3);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stat.gaugecard{width:184px;display:flex;align-items:center;gap:9px}
+.stat.gaugecard .gtext{min-width:0;display:block}
+.gauge{width:62px;height:36px;display:block;flex:none;overflow:visible}
+.stat .v{color:var(--ink)}
+
+.hero{margin-top:9px;background:var(--surface);border:1px solid var(--line);border-radius:11px;
+  background-image:radial-gradient(120% 90% at 22% 0%,var(--glow),transparent 62%);
+  display:grid;grid-template-columns:196px minmax(0,1fr)}
+.hero-left{padding:11px 12px;border-right:1px solid var(--line);display:flex;flex-direction:column;justify-content:center}
+.hero-right{padding:11px 12px;min-width:0;display:flex;flex-direction:column}
+.hero-right #view-body{flex:1;display:flex;flex-direction:column;justify-content:center;min-height:0}
+.viewtabs{display:flex;gap:4px}
+
+.hub{display:flex;flex-direction:column;padding:13px 14px;min-height:466px;
+  background:var(--surface);border:1px solid var(--line);border-radius:11px;
+  background-image:radial-gradient(78% 88% at 50% 52%,var(--glow-forte),transparent 68%)}
+.hubhead{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:5px}
+.hubgrid{position:relative;flex:1;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
+  align-items:center;gap:12px;min-height:0;overflow:hidden}
+.hublines{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:0}
+.hubcol{display:flex;flex-direction:column;min-width:0;position:relative;z-index:1}
+.hubcol{justify-content:center}
+.hubcol .spokes{width:100%;max-width:214px}
+.hubcol[data-side="left"]{align-items:flex-start}
+.hubcol[data-side="right"]{align-items:flex-end}
+.hubcol[data-side="left"] .colhead{max-width:214px}
+.hubcol[data-side="right"] .colhead{max-width:214px}
+.hubcenter{display:flex;flex-direction:column;align-items:center;gap:10px;position:relative;z-index:1;flex:none}
+.hubentrada{width:344px;position:relative;z-index:1}
+.hubentrada .spokes{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.hubentrada .colhead{justify-content:center;margin-bottom:4px}
+.colhead{display:flex;align-items:baseline;gap:6px;margin-bottom:6px}
+.colhead b{font-size:8.5px;text-transform:uppercase;letter-spacing:1.2px;color:var(--brand);font-weight:700}
+.colhead small{font-size:9px;color:var(--ink-3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hubcol[data-side="right"] .colhead{justify-content:flex-end}
+.spokes{display:flex;flex-direction:column;gap:9px;position:relative;z-index:1;min-width:0}
+.hubstate{cursor:pointer;font:inherit;display:inline-flex;align-items:center;gap:6px;background:var(--surface-2);border:1px solid var(--line);
+  border-radius:20px;padding:3px 10px;font-size:10px;color:var(--ink-2);white-space:nowrap}
+.hubstate:hover{border-color:var(--brand)}
+.hubstate i{width:7px;height:7px;border-radius:50%;background:var(--brand);flex:none;
+  box-shadow:0 0 0 3px color-mix(in srgb, var(--brand) 22%, transparent)}
+@media(prefers-reduced-motion:no-preference){
+  .hubstate.on i{animation:pisca 2s ease-in-out infinite}
+}
+@keyframes pisca{0%,100%{opacity:1}50%{opacity:.35}}
+.hubstate.off i{background:var(--ink-3);box-shadow:none}
+.spoke{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:7px;align-items:center;
+  background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:3px 9px;
+  text-align:left;width:100%;min-width:0;line-height:1.25}
+.spoke .ico{flex:none;display:block}
+.spoke.dest{padding:2px 9px}
+.spoke.dest .sn{font-size:10px}
+.spoke:hover{border-color:var(--brand);background:var(--hover)}
+.spoke.na{border-style:dashed}
+.spoke .sn{font-size:10.5px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.spoke .sn small{display:block;font-size:8.5px;color:var(--ink-3);font-weight:400;line-height:1.2}
+.spoke .sv{font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
+.spoke .sv.na{color:var(--ink-3);font-weight:400}
+.core{position:relative;z-index:2;width:262px;height:262px;flex:none;display:grid;place-items:center;
+  background:transparent;border:0;padding:0}
+
+.core::before{content:"";position:absolute;inset:-18px;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,var(--glow-forte) 0%,transparent 68%)}
+@media(prefers-reduced-motion:no-preference){
+  .core::before{animation:halo 3.4s ease-in-out infinite}
+}
+@keyframes halo{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:1;transform:scale(1.07)}}
+.core:hover .coreval{color:var(--brand)}
+.corering{position:absolute;inset:0;width:100%;height:100%}
+.coretext{position:relative;text-align:center;display:grid;gap:4px;padding:0 12px;justify-items:center;
+  text-shadow:var(--txt-sombra)}
+
+.coresplit{display:grid;grid-template-columns:1fr 1fr;width:216px}
+.coresplit .lado{display:grid;gap:2px;padding:0 7px;min-width:0}
+.coresplit .prev{text-align:right}
+.coresplit .temos{text-align:left}
+.coresplit small{font-size:7.5px;text-transform:uppercase;letter-spacing:.9px;font-weight:750;color:var(--ink);white-space:nowrap}
+.coresplit small i{display:inline-block;width:6px;height:6px;border-radius:50%;margin:0 4px 1px;vertical-align:middle}
+.coresplit .prev small i{background:var(--s2)}
+.coresplit .temos small i{background:var(--s1)}
+.hubcol .spokes{gap:5px}
+.coresplit small{font-size:8.5px}
+.coresplit b{font-size:27px;font-weight:750;letter-spacing:-1px;font-variant-numeric:tabular-nums;line-height:1;color:var(--ink)}
+.corelab{font-size:9px;text-transform:uppercase;letter-spacing:1.4px;color:var(--ink-2);font-weight:700;
+  background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:1px 8px;text-shadow:none}
+.coreval{font-size:40px;font-weight:730;letter-spacing:-1.9px;font-variant-numeric:tabular-nums;line-height:1}
+.coresub{font-size:11px;color:var(--ink-2);line-height:1.35;font-weight:600}
+.hubfoot{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:7px;padding-top:7px;
+  border-top:1px solid var(--line)}
+.metafield{display:flex;align-items:center;gap:6px;font-size:8.5px;text-transform:uppercase;
+  letter-spacing:1.1px;color:var(--ink-3);font-weight:700}
+.metafield input{background:var(--surface-2);border:1px solid var(--line);border-radius:7px;padding:3px 8px;
+  font-size:12px;font-weight:700;width:104px;text-align:right;font-variant-numeric:tabular-nums;
+  color:var(--ink);text-transform:none;letter-spacing:0}
+.metafield input:focus{border-color:var(--brand);outline:0}
+
+.bars{display:grid;gap:1px;margin-top:6px}
+.mark{display:block;width:100%;text-align:left;background:transparent;border:0;border-radius:7px;padding:3px 6px}
+.mark:hover{background:var(--hover)}
+.mark .row{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.mark .lbl{font-size:10.5px;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mark .num{font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
+.track{display:block;height:7px;background:var(--track);border-radius:4px;margin-top:3px;overflow:hidden}
+.fill{display:block;height:100%;border-radius:0 4px 4px 0;background:var(--s1)}
+.mark small{font-size:9.5px;color:var(--ink-3);display:block;margin-top:2px}
+.stackwrap{padding:5px 6px;border-radius:7px}
+.stackwrap:hover{background:var(--hover)}
+.stackhead{display:flex;justify-content:space-between;gap:8px;font-size:10.5px;color:var(--ink-2)}
+.stackhead b{color:var(--ink);font-variant-numeric:tabular-nums;font-weight:650}
+.stack{display:flex;height:12px;gap:2px;margin-top:4px}
+.seg{border:0;padding:0;height:100%;border-radius:2px;cursor:pointer;min-width:3px}
+.seg:hover{filter:brightness(1.2)}
+.legend{display:flex;gap:11px;flex-wrap:wrap;font-size:10px;color:var(--ink-2);margin-top:7px}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+
+.rrow{display:grid;grid-template-columns:17px 1fr auto;gap:7px;align-items:center;width:100%;
+  background:transparent;border:0;border-radius:6px;padding:5px 6px;text-align:left}
+.rrow:hover{background:var(--hover)}
+.dimsel{display:flex;gap:4px;margin:1px 0 6px}
+.dimsel{flex-wrap:wrap}
+.dimsel .pill{flex:1 1 44%;text-align:center;padding:4px;font-size:10px;cursor:pointer}
+.dimsel .pill:hover{border-color:var(--brand)}
+.cobertura{font-size:9.5px;color:var(--ink-3);margin:0 0 7px;line-height:1.4}
+.cobertura b{color:var(--warn-ink)}
+.composicao{display:flex;height:9px;gap:2px;border-radius:3px;overflow:hidden;margin:2px 0 7px}
+.composicao span{height:100%;border-radius:2px}
+.legenda{display:grid;grid-template-columns:1fr 1fr;gap:3px 8px;margin-bottom:9px}
+.legenda span{font-size:9.5px;color:var(--ink-2);display:flex;align-items:center;gap:5px;white-space:nowrap}
+.legenda i{width:7px;height:7px;border-radius:2px;flex:none}
+.legenda b{margin-left:auto;font-variant-numeric:tabular-nums;color:var(--ink)}
+.famhead{display:flex;align-items:center;gap:6px;margin:9px 0 3px;padding-top:7px;border-top:1px solid var(--line)}
+.famhead:first-child{margin-top:0;padding-top:0;border-top:0}
+.famhead i{width:6px;height:6px;border-radius:50%;flex:none}
+.famhead b{font-size:8.5px;text-transform:uppercase;letter-spacing:1px;color:var(--ink-3);font-weight:700}
+.famhead em{margin-left:auto;font-style:normal;font-size:9.5px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.rrow .share{font-size:9px;color:var(--ink-3);font-variant-numeric:tabular-nums;margin-left:6px}
+.rrow .i{font-size:9.5px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.rrow.topo .i{color:var(--brand);font-weight:750}
+.rrow.topo .n{font-weight:600}
+.rrow .n{font-size:11px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rrow .n small{display:block;font-size:9px;color:var(--ink-3)}
+.rrow .val{font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.rrow .val.na{color:var(--ink-3);font-weight:400}
+.rbar{grid-column:2/4;height:3px;border-radius:3px;background:var(--track);overflow:hidden;margin-top:1px}
+.rbar i{display:block;height:100%;border-radius:3px;background:var(--s1)}
+.donutwrap{display:flex;gap:10px;align-items:center}
+.donut{width:78px;height:78px;flex:none}
+.arc{cursor:pointer}
+.arc:hover{filter:brightness(1.2)}
+
+.panel{margin-top:9px;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:10px 12px}
+.rotapanel{display:flex;flex-direction:column}
+.rota-stats{display:flex;gap:14px;flex-wrap:wrap;margin:2px 0 6px}
+.rota-stats b{font-size:14px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.3px}
+.rota-stats span{font-size:9.5px;color:var(--ink-3);display:block;text-transform:uppercase;letter-spacing:.8px;font-weight:650}
+.rota{width:100%;height:118px;display:block;overflow:visible;flex:1;min-height:104px}
+.rota-eixo{display:flex;justify-content:space-between;font-size:9px;color:var(--ink-3);margin-top:2px}
+.fonte{font-size:9.5px;color:var(--ink-3);margin-top:7px;padding-top:6px;border-top:1px solid var(--line)}
+.fonte a{color:var(--brand)}
+.ponto{cursor:pointer}
+.aviao{pointer-events:none}
+.ce-vermais{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:8px}
+#ver-todos{border-color:var(--brand);color:var(--brand)}
+#ver-todos:hover{background:color-mix(in srgb, var(--brand) 12%, transparent);color:var(--ink)}
+td.pos{color:var(--ink-3);font-variant-numeric:tabular-nums;width:26px}
+tr.topo td.pos{color:var(--brand);font-weight:750}
+td.frente{color:var(--ink-3);font-size:10.5px;max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rank{max-height:min(52vh,420px);overflow:auto;margin:2px -4px 0;padding:0 4px}
+.rank .composicao{margin-top:0}
+.rank .legenda{grid-template-columns:1fr 1fr}
+.rank table{font-size:11px}
+.rank td,.rank th{padding:5px 4px}
+.rank thead th{position:sticky;top:0;background:var(--surface);z-index:1}
+.rank tr.zero td{opacity:.55}
+table{width:100%;border-collapse:collapse;font-size:11px}
+th{text-align:left;font-size:8.5px;text-transform:uppercase;letter-spacing:.9px;color:var(--brand);font-weight:700}
+td,th{padding:6px 5px;border-bottom:1px solid var(--line)}
+tbody tr[data-open]{cursor:pointer}
+tbody tr[data-open]:hover{background:var(--hover)}
+td.n{text-align:right;font-variant-numeric:tabular-nums}
+.alert{background:var(--warn-bg);color:var(--warn-ink);border-radius:20px;padding:2px 7px;font-size:9.5px;white-space:nowrap}
+.note{padding:7px 9px;border-left:3px solid var(--warn-line);background:var(--warn-bg);
+  color:var(--warn-ink);border-radius:0 7px 7px 0;font-size:10.5px;margin:8px 0}
+
+.bottombar{display:flex;align-items:center;gap:8px;padding:7px 13px;background:var(--surface);
+  border-top:1px solid var(--line);flex:none;overflow-x:auto}
+.blabel{font-size:8.5px;text-transform:uppercase;letter-spacing:1.1px;color:var(--brand);font-weight:700;white-space:nowrap}
+.issue{display:inline-flex;align-items:center;gap:7px;background:var(--surface-2);border:1px solid var(--line);
+  border-radius:20px;padding:3px 11px 3px 3px;white-space:nowrap}
+.issue:hover{border-color:var(--warn-line)}
+.idx{width:19px;height:19px;border-radius:50%;background:var(--warn-bg);color:var(--warn-ink);
+  display:grid;place-items:center;font-size:9px;font-weight:700;flex:none}
+.issue .t{font-size:10.5px;color:var(--ink-2)}
+.issue:hover .t{color:var(--ink)}
+.foot{font-size:9.5px;color:var(--ink-3);white-space:nowrap}
+
+#tip{position:fixed;z-index:60;pointer-events:none;opacity:0;transform:translateY(3px);
+  transition:opacity .12s ease,transform .12s ease;background:var(--surface-2);border:1px solid var(--line);
+  box-shadow:var(--shadow);border-radius:8px;padding:7px 9px;max-width:240px}
+#tip.on{opacity:1;transform:translateY(0)}
+#tip .tv{font-size:14px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
+#tip .tl{font-size:10px;color:var(--ink-3);margin-top:2px}
+#tip .tr{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--ink-2);margin-top:4px}
+#tip .tk{width:11px;height:2px;border-radius:2px;flex:none}
+#tip .th{font-size:9.5px;color:var(--ink-3);margin-top:5px;padding-top:5px;border-top:1px solid var(--line)}
+
+dialog{border:0;padding:0;background:transparent;max-width:none;max-height:none;width:100%;height:100%;overflow:auto}
+dialog::backdrop{background:rgba(3,8,18,.72)}
+html[data-theme="light"] dialog::backdrop{background:rgba(16,38,68,.44)}
+.ov-wrap{min-height:100%;display:grid;place-items:center;padding:18px}
+.ov{width:min(560px,100%);background:var(--surface);color:var(--ink);border:1px solid var(--line);
+  border-radius:13px;box-shadow:var(--shadow);animation:pop .16s ease;
+  background-image:radial-gradient(120% 70% at 50% 0%,var(--glow),transparent 60%)}
+@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.985)}}
+@media(prefers-reduced-motion:reduce){.ov{animation:none}}
+.ov-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;padding:14px 16px 0}
+.eyebrow{font-size:8.5px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:var(--brand);margin-bottom:3px}
+.ov-head h3{font-size:15px;font-weight:650;letter-spacing:-.2px}
+.ov-x{background:var(--surface-2);border:1px solid var(--line);border-radius:7px;width:27px;height:27px;
+  flex:none;font-size:15px;line-height:1;color:var(--ink-2)}
+.ov-x:hover{border-color:var(--brand);color:var(--ink)}
+.ov-body{padding:9px 16px 16px}
+.ov-hero{display:flex;align-items:baseline;gap:9px;margin:7px 0 2px}
+.ov-hero .h{font-size:33px;font-weight:730;letter-spacing:-1.4px;font-variant-numeric:tabular-nums;line-height:1}
+.ov-hero .hs{font-size:11px;color:var(--ink-3)}
+.ov-viz{margin:11px 0 4px}
+.ov-sec{margin-top:12px}
+.ov-sec h4{font-size:8.5px;text-transform:uppercase;letter-spacing:1.1px;color:var(--ink-3);font-weight:700;margin:0 0 6px}
+.ov-sec p{font-size:11.5px;color:var(--ink-2);line-height:1.55;margin-bottom:6px}
+.ov .note{margin:0}
+.ov-link{display:inline-block;margin-top:9px;font-size:11.5px}
+
+@media(max-width:980px){
+  body{overflow:auto}
+  .app{height:auto;min-height:100vh}
+  .body{grid-template-columns:1fr}
+  .canvas{overflow:visible}
+  .rail{border-left:0;border-top:1px solid var(--line)}
+  .hero{grid-template-columns:1fr}
+  .hubgrid{grid-template-columns:1fr;justify-items:center}
+  .hublines{display:none}
+  .core{margin:6px 0}
+  .hero-left{border-right:0;border-bottom:1px solid var(--line)}
+}
+@media(max-width:560px){
+  .canvas{padding:10px}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .search{max-width:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="topbar">
+    <div class="logo"><i>H</i>Horizonte<span>.</span></div>
+    <div class="vsep"></div>
+    <div class="pickcol">
+      <span class="lab">Programa</span>
+      <b style="font-size:12px;font-weight:600">Clube de indicação</b>
+    </div>
+    <div class="spacer"></div>
+    <span class="tag">Base <b>demonstração</b></span>
+    <button class="tag" type="button" id="issues-count" style="cursor:pointer"></button>
+    <button class="ghost" type="button" id="theme">Claro</button>
+  </header>
+
+  <div class="filterbar">
+    <div class="fgroup">
+      <span class="lab">Recorte</span>
+      <span class="tag" id="scope-tag"></span>
+      <button class="ghost" type="button" id="scope-reset" hidden>Limpar</button>
+    </div>
+    <div class="spacer"></div>
+    <span class="tag">Retrato <b id="retrato-data">--/--/----</b></span>
+    <span class="tag">Dados fictícios</span>
+  </div>
+
+  <div class="body">
+    <div class="canvas">
+      <div class="ctop">
+        <div id="status"></div>
+        <div class="stats" id="stats"></div>
+      </div>
+
+      <section class="hub">
+        <div class="hubhead">
+          <div>
+            <h2>Quanto devemos ter × quanto já temos</h2>
+            <p class="hint" id="hub-hint"></p>
+          </div>
+          <button class="hubstate" type="button" id="auto" aria-live="polite"><i></i><span id="auto-txt"></span></button>
+        </div>
+        <div class="hubgrid" id="hubgrid">
+          <svg class="hublines" id="hublines" aria-hidden="true"></svg>
+          <div class="hubcol" data-side="left">
+            <div class="colhead"><b>Origem por equipe</b><small id="head-l"></small></div>
+            <div class="spokes" id="spokes-l"></div>
+          </div>
+          <div class="hubcenter">
+          <button class="core" type="button" id="core" aria-label="Detalhe do total consolidado">
+            <svg class="corering" id="corering" viewBox="0 0 150 150" aria-hidden="true"></svg>
+            <span class="coretext">
+              <span class="corelab" id="core-lab">Meta</span>
+              <span class="coresplit">
+                <span class="lado prev"><small>Previsão<i></i></small><b id="core-prev"></b></span>
+                <span class="lado temos"><small><i></i>Já temos</small><b id="core-val"></b></span>
+              </span>
+              <span class="coresub" id="core-sub"></span>
+            </span>
+          </button>
+            <div class="hubentrada" data-side="baixo">
+              <div class="colhead"><b>Fontes de cadastro</b><small id="head-e"></small></div>
+              <div class="spokes" id="spokes-e"></div>
+            </div>
+          </div>
+          <div class="hubcol" data-side="right">
+            <div class="colhead"><b>Origem por time</b><small id="head-r"></small></div>
+            <div class="spokes" id="spokes-r"></div>
+          </div>
+        </div>
+        <div class="hubfoot">
+          <label class="metafield" for="meta">Meta
+            <input id="meta" type="number" min="0" step="1" placeholder="não definida" inputmode="numeric">
+          </label>
+          <span class="tag" id="meta-state"></span>
+          <div class="spacer"></div>
+          <span class="hint" id="hub-foot"></span>
+        </div>
+      </section>
+
+      <div class="botrow">
+      <section class="panel pistapanel">
+        <div class="railhead">
+          <h2>Pista da expectativa</h2>
+          <span class="tag" id="pista-tag"></span>
+        </div>
+        <div class="rota-stats" id="pista-stats"></div>
+        <svg class="pista" id="pista-svg" role="button" tabindex="0" aria-label="Pista da expectativa"></svg>
+        <p class="fonte" id="pista-fonte"></p>
+      </section>
+      <section class="panel rotapanel">
+        <div class="railhead">
+          <h2>Rota da captação</h2>
+          <span class="tag" id="rota-periodo"></span>
+        </div>
+        <div class="rota-stats" id="rota-stats"></div>
+        <svg class="rota" id="rota-svg" role="img" aria-label="Cadastros por dia"></svg>
+        <div class="rota-eixo" id="rota-eixo"></div>
+        <p class="fonte">Fonte: base fictícia de demonstração, gerada por scripts/gerar-dados.mjs</p>
+      </section>
+      </div>
+    </div>
+
+    <aside class="rail">
+      <div class="railsec">
+        <div class="railhead"><h2 id="dim-titulo">Equipe</h2></div>
+        <div class="dimsel" id="dimsel">
+          <button class="pill" type="button" data-dimensao="equipe" aria-pressed="true" title="Abrir Equipe em detalhe">Equipe</button>
+          <button class="pill" type="button" data-dimensao="cidade" aria-pressed="false" title="Abrir Cidade em detalhe">Cidade</button>
+          <button class="pill" type="button" data-dimensao="plano" aria-pressed="false" title="Abrir Plano em detalhe">Plano</button>
+          <button class="pill" type="button" data-dimensao="regiao" aria-pressed="false" title="Abrir Região em detalhe">Região</button>
+          <button class="pill" type="button" data-dimensao="time" aria-pressed="false" title="Abrir Time em detalhe">Time</button>
+        </div>
+        <p class="cobertura" id="cobertura"></p>
+      </div>
+      <div class="railsec">
+        <div class="railhead"><h2>Controladores</h2><span class="tag" id="ctrl-count"></span></div>
+        <button class="ctrlmenu" type="button" id="ver-todos" aria-label="Abrir todos os controladores">
+          <span id="ctrl-top"></span>
+          <span class="cm-open">Abrir todos os controladores →</span>
+        </button>
+        <p class="cobertura" id="ctrl-resto" style="margin:6px 0 0"></p>
+      </div>
+    </aside>
+  </div>
+
+  <footer class="bottombar">
+    <span class="blabel">Pontos de atenção</span>
+    <span id="issues" style="display:flex;gap:6px"></span>
+    <div class="spacer"></div>
+    <span class="foot">Demonstração · todos os nomes e números são fictícios</span>
+  </footer>
+</div>
+
+<div id="tip" role="status" aria-live="polite"></div>
+
+<dialog id="ov" aria-labelledby="ov-title">
+  <div class="ov-wrap">
+    <div class="ov">
+      <div class="ov-head">
+        <div>
+          <div class="eyebrow" id="ov-eyebrow"></div>
+          <h3 id="ov-title"></h3>
+        </div>
+        <button class="ov-x" type="button" id="ov-close" aria-label="Fechar">&times;</button>
+      </div>
+      <div class="ov-body" id="ov-body"></div>
+    </div>
+  </div>
+</dialog>
+
+<script>
+(() => {
+"use strict";
+
+/* DADOS:INICIO — gerado por scripts/gerar-dados.mjs (semente 20250531). Dados fictícios; não editar à mão. */
+const N_MEMBROS = 8517;
+const N_PILOTOS = 2011;
+const N_ASPIRANTES = 2023;
+const N_CONTROLADORES = 73;
+const P_MEMBROS = 8490;
+const P_PILOTOS = 569;
+const P_ASPIRANTES = 217;
+const P_CONTROLADORES = 46;
+
+const PAINEL = {
+  meta: 12430,
+  temos: 9322,
+  projetada: 76440,
+  pilotosNoAr: 1970,
+  pessoas: 12624,
+  membroLinhas: 9349,
+  confirmouSim: 3,
+  confirmouOutro: 0,
+  tagP40: 897,
+  tagP20: 584,
+  p20Bateram: 0,
+  contabilizados: 9322,
+  pilotosLancaram: 316,
+  pilotosComLinha: 770,
+  pilotosQueBateram: 41,
+  duplicadas: 992,
+  semTelefone: 88,
+  planoBateramBruto: 63,
+  planoBateramLimpo: 47,
+  pilotoProprioPlano: 18,
+  semConfirmacao: 9319,
+  confirmaram: 3,
+  aspiranteTotal: 3758,
+  aspiranteConvertido: 1735,
+  aspiranteMesclado: 32,
+  transferencias: 296,
+  contasTeste: 3,
+  fontes: [
+    {nome:"Membros",       n:N_MEMBROS,       sub:"sem outro papel na base",  icone:"users"},
+    {nome:"Pilotos",       n:N_PILOTOS,       sub:"embaixadores do clube",    icone:"pin"},
+    {nome:"Aspirantes",    n:N_ASPIRANTES,    sub:"ainda não viraram piloto", icone:"form"},
+    {nome:"Controladores", n:N_CONTROLADORES, sub:"coordenam os pilotos",     icone:"trend"}
+  ],
+  passageiros: [
+    {nome:"Membros",       n:P_MEMBROS,       sub:"só passageiro",         icone:"users"},
+    {nome:"Pilotos",       n:P_PILOTOS,       sub:"também é piloto",       icone:"pin"},
+    {nome:"Aspirantes",    n:P_ASPIRANTES,    sub:"ainda aspirante",       icone:"form"},
+    {nome:"Controladores", n:P_CONTROLADORES, sub:"também é controlador",  icone:"trend"}
+  ]
+};
+PAINEL.faltam = Math.max(PAINEL.meta - PAINEL.temos, 0);
+
+const EQUIPES = [
+  {"nome":"(sem equipe)","n":3105,"pilotos":670,"fam":"sem"},
+  {"nome":"Cultura","n":1687,"pilotos":274,"fam":"parceiro"},
+  {"nome":"Bairro Serra Azul","n":979,"pilotos":137,"fam":"bairro"},
+  {"nome":"Bairro Aurora","n":688,"pilotos":178,"fam":"bairro"},
+  {"nome":"Universitários","n":575,"pilotos":145,"fam":"prof"},
+  {"nome":"Voluntários","n":413,"pilotos":89,"fam":"parceiro"},
+  {"nome":"Comércio local","n":292,"pilotos":85,"fam":"prof"},
+  {"nome":"Educação","n":287,"pilotos":44,"fam":"prof"},
+  {"nome":"Esportes","n":279,"pilotos":66,"fam":"parceiro"},
+  {"nome":"Bairro Jardim do Sol","n":259,"pilotos":49,"fam":"bairro"},
+  {"nome":"Condomínios","n":165,"pilotos":35,"fam":"bairro"},
+  {"nome":"Saúde","n":126,"pilotos":35,"fam":"prof"},
+  {"nome":"Parceiros Sul","n":107,"pilotos":26,"fam":"parceiro"},
+  {"nome":"Bairro Lagoa Clara","n":74,"pilotos":18,"fam":"bairro"},
+  {"nome":"Parceiros Norte","n":73,"pilotos":10,"fam":"parceiro"},
+  {"nome":"Tecnologia","n":71,"pilotos":13,"fam":"prof"}
+];
+
+const TIMES = [
+  {"t":"P20_CENTRO","pil":276,"proj":5520,"ex":9,"n":6,"lanc":6,"bat":0,"zer":273},
+  {"t":"P40_CENTRO","pil":867,"proj":34680,"ex":5555,"n":4907,"lanc":529,"bat":26,"zer":711},
+  {"t":"P20_LITORAL","pil":20,"proj":400,"ex":0,"n":0,"lanc":0,"bat":0,"zer":20},
+  {"t":"P40_LITORAL","pil":98,"proj":3920,"ex":594,"n":388,"lanc":54,"bat":3,"zer":78},
+  {"t":"P20_SERRA","pil":69,"proj":1380,"ex":4,"n":4,"lanc":2,"bat":0,"zer":67},
+  {"t":"P40_SERRA","pil":138,"proj":5520,"ex":132,"n":703,"lanc":11,"bat":1,"zer":102},
+  {"t":"COMUNIDADE_A","pil":59,"proj":2360,"ex":2016,"n":768,"lanc":56,"bat":17,"zer":20},
+  {"t":"COMUNIDADE_B","pil":29,"proj":1160,"ex":1080,"n":181,"lanc":27,"bat":2,"zer":12},
+  {"t":"EMBAIXADOR_100","pil":29,"proj":2900,"ex":920,"n":591,"lanc":23,"bat":4,"zer":15},
+  {"t":"EMBAIXADOR_MAIS_100","pil":16,"proj":1600,"ex":736,"n":217,"lanc":16,"bat":2,"zer":10},
+  {"t":"EMBAIXADOR_MAIS_200","pil":14,"proj":2800,"ex":840,"n":713,"lanc":14,"bat":4,"zer":5},
+  {"t":"SEM_TIME","pil":355,"proj":14200,"ex":544,"n":844,"lanc":32,"bat":4,"zer":330}
+];
+const TIME_INFO = [
+  ["P20_CENTRO","Plano 20 Centro","p20"],
+  ["P40_CENTRO","Plano 40 Centro","p40"],
+  ["P20_LITORAL","Plano 20 Litoral","p20"],
+  ["P40_LITORAL","Plano 40 Litoral","p40"],
+  ["P20_SERRA","Plano 20 Serra","p20"],
+  ["P40_SERRA","Plano 40 Serra","p40"],
+  ["COMUNIDADE_A","Comunidade A","com"],
+  ["COMUNIDADE_B","Comunidade B","com"],
+  ["EMBAIXADOR_100","Embaixador 100","emb"],
+  ["EMBAIXADOR_MAIS_100","Embaixador +100","emb"],
+  ["EMBAIXADOR_MAIS_200","Embaixador +200","emb"],
+  ["SEM_TIME","Sem time","sem"]
+];
+
+const CONTROLADORES = [
+  ["Ana V.","(sem equipe)",410,1929],
+  ["Caio L.","Cultura",178,1182],
+  ["Paulo D.","Bairro Serra Azul",97,693],
+  ["Natália V.","Bairro Aurora",139,547],
+  ["Vanessa N.","Universitários",94,327],
+  ["Leandro A.","(sem equipe)",46,305],
+  ["Ana P.","(sem equipe)",95,305],
+  ["Diego G.","Bairro Serra Azul",30,222],
+  ["Isabela L.","Esportes",53,220],
+  ["Heitor G.","Cultura",38,212],
+  ["Flávia L.","Educação",33,208],
+  ["Vanessa V.","Comércio local",51,187],
+  ["Otávio B.","Voluntários",56,186],
+  ["Yasmin M.","Voluntários",18,143],
+  ["Olívia C.","Bairro Aurora",36,141],
+  ["Olívia F.","Universitários",21,139],
+  ["Leandro N.","Bairro Jardim do Sol",22,139],
+  ["Olívia A.","(sem equipe)",24,129],
+  ["Yasmin G.","Saúde",35,126],
+  ["Rodrigo T.","Cultura",17,124],
+  ["Flávia T.","Universitários",30,109],
+  ["Caio D.","Parceiros Sul",26,107],
+  ["Yasmin A.","Comércio local",34,105],
+  ["Bruno H.","(sem equipe)",20,101],
+  ["Tatiane P.","Cultura",24,98],
+  ["Igor L.","Condomínios",22,91],
+  ["Bruno P.","Voluntários",15,84],
+  ["Bruno T.","(sem equipe)",21,81],
+  ["Lívia S.","Educação",11,79],
+  ["Rafael G.","(sem equipe)",12,78],
+  ["Gabriela G.","Bairro Lagoa Clara",16,74],
+  ["Wagner R.","Condomínios",13,74],
+  ["Olívia D.","Bairro Jardim do Sol",19,73],
+  ["Gabriela T.","Parceiros Norte",10,73],
+  ["Sofia H.","Cultura",10,71],
+  ["Renata G.","Tecnologia",13,71],
+  ["Rogério S.","Bairro Serra Azul",10,64],
+  ["Natália N.","(sem equipe)",10,61],
+  ["Flávia R.","(sem equipe)",8,60],
+  ["Diego P.","Esportes",11,59],
+  ["Nicolas N.","(sem equipe)",14,56],
+  ["Mirela L.","Bairro Jardim do Sol",8,47],
+  ["Danilo D.","Esportes",2,0],
+  ["Vinícius A.","(sem equipe)",2,0],
+  ["Marina N.","(sem equipe)",8,0],
+  ["Wagner T.","Bairro Lagoa Clara",2,0],
+  ["Olívia T.","Cultura",7,0],
+  ["Tiago F.","Bairro Aurora",3,0]
+];
+const CTRL_ZERO_SEM_PILOTO = 25;
+const CTRL_TOTAL = CONTROLADORES.length + CTRL_ZERO_SEM_PILOTO;
+
+const CAPTACAO = [
+  ["2025-05-01",109],
+  ["2025-05-02",81],
+  ["2025-05-03",80],
+  ["2025-05-04",63],
+  ["2025-05-05",124],
+  ["2025-05-06",111],
+  ["2025-05-07",123],
+  ["2025-05-08",121],
+  ["2025-05-09",130],
+  ["2025-05-10",226],
+  ["2025-05-11",109],
+  ["2025-05-12",193],
+  ["2025-05-13",188],
+  ["2025-05-14",193],
+  ["2025-05-15",204],
+  ["2025-05-16",176],
+  ["2025-05-17",145],
+  ["2025-05-18",121],
+  ["2025-05-19",234],
+  ["2025-05-20",235],
+  ["2025-05-21",217],
+  ["2025-05-22",213],
+  ["2025-05-23",306],
+  ["2025-05-24",368],
+  ["2025-05-25",145],
+  ["2025-05-26",311],
+  ["2025-05-27",336],
+  ["2025-05-28",268],
+  ["2025-05-29",373],
+  ["2025-05-30",252],
+  ["2025-05-31",76]
+];
+const LIDO_AS = "31/05/2025 17:40";
+
+const DIM_CIDADE = [
+  {"name":"Lagoa Serena","n":8229,"pilotos":1556,"fam":"bairro"},
+  {"name":"Porto Alvorada","n":659,"pilotos":236,"fam":"prof"},
+  {"name":"Serra Clara","n":223,"pilotos":71,"fam":"prof"},
+  {"name":"Lumiara","n":84,"pilotos":14,"fam":"prof"},
+  {"name":"Lago Dourado","n":56,"pilotos":23,"fam":"prof"},
+  {"name":"Monte Verdejante","n":37,"pilotos":22,"fam":"prof"},
+  {"name":"Recanto das Palmas","n":0,"pilotos":16,"fam":"sem"},
+  {"name":"Brisa do Norte","n":0,"pilotos":14,"fam":"sem"},
+  {"name":"Campos do Ipê","n":0,"pilotos":12,"fam":"sem"},
+  {"name":"Vila Esperança","n":0,"pilotos":6,"fam":"sem"}
+];
+const DIM_PLANO = [
+  {"name":"Plano 40 - meta 40","n":7277,"pilotos":1546,"fam":"bairro"},
+  {"name":"Outros planos","n":1421,"pilotos":59,"fam":"parceiro"},
+  {"name":"Plano 20 - meta 20","n":9,"pilotos":365,"fam":"prof"}
+];
+const DIM_REGIAO = [
+  {"name":"Sul","n":238,"pilotos":89,"fam":"bairro"},
+  {"name":"Oeste","n":146,"pilotos":59,"fam":"parceiro"},
+  {"name":"Norte","n":126,"pilotos":24,"fam":"prof"},
+  {"name":"Leste","n":93,"pilotos":47,"fam":"prof"},
+  {"name":"Centro","n":59,"pilotos":53,"fam":"prof"},
+  {"name":"Sudeste","n":0,"pilotos":6,"fam":"sem"}
+];
+/* DADOS:FIM */
+
+const TIMES_ORDEM = TIME_INFO.map(([slug, rotulo, fam]) => {
+  const d = TIMES.find(x => x.t === slug) || {pil:0, proj:0, ex:0, n:0, lanc:0, bat:0, zer:0};
+  return {slug, name:rotulo, fam, n:d.n, pilotos:d.pil, proj:d.proj, ex:d.ex, lanc:d.lanc, bat:d.bat, zer:d.zer};
+});
+
+const DIMENSOES = {
+  equipe: {nome:"Equipe", sub:"equipe do controlador",                itens:null},
+  cidade: {nome:"Cidade", sub:"cidade do piloto",                     itens:DIM_CIDADE},
+  plano:  {nome:"Plano",  sub:"meta do piloto · sem contar a equipe", itens:DIM_PLANO},
+  regiao: {nome:"Região", sub:"região marcada no piloto",             itens:DIM_REGIAO},
+  time:   {nome:"Time",   sub:"time do piloto",                       itens:TIMES_ORDEM}
+};
+let dimensao = "equipe";
+
+const achNf = n => Number(n).toLocaleString("pt-BR");
+const achPct = (a,b) => b ? (100*a/b).toLocaleString("pt-BR",{maximumFractionDigits:1}) : "0";
+const achSoma = arr => arr.reduce((a,d) => a + d.n, 0);
+const achP40 = DIM_PLANO.find(d => d.name.indexOf("Plano 40") === 0) || {n:0, pilotos:0};
+const achP20 = DIM_PLANO.find(d => d.name.indexOf("Plano 20") === 0) || {n:0, pilotos:0};
+
+const ISSUES = [
+  {n:"01", t:"“Já temos” é Contabilizados",
+   d:achNf(PAINEL.temos) + " contabilizados · " + achNf(PAINEL.pessoas) + " pessoas na base",
+   p:["O número grande da tela são os passageiros cadastrados pelos pilotos ativos: " + achNf(PAINEL.temos) + ". O percentual do balão é o Cumprido da real — Contabilizados dividido pela Expectativa Real.",
+      "Pessoas distintas é outra pergunta. Somando membros, pilotos, aspirantes e controladores, a base tem " + achNf(PAINEL.pessoas) + " pessoas diferentes, cada uma contada uma vez, pelo telefone, no papel mais alto: controlador > piloto > aspirante > membro.",
+      "Somar as quatro listas inteiras contaria " + achNf(PAINEL.duplicadas) + " registros duas vezes. Por isso, na composição por pessoas, os que são só membro somam " + achNf(N_MEMBROS) + " e não os " + achNf(PAINEL.membroLinhas) + " registros da lista: a diferença são pessoas que já aparecem num papel acima."],
+   warn:achNf(PAINEL.semTelefone) + " registros não têm telefone utilizável e não puderam ser cruzados — contam como pessoas distintas porque não há como provar o contrário. E telefone não é chave perfeita: quem divide o número com alguém da família vira uma pessoa só."},
+  {n:"02", t:"Confirmação de participação praticamente não registrada",
+   d:achNf(PAINEL.confirmaram) + " de " + achNf(PAINEL.temos) + " contabilizados",
+   p:["O campo de confirmação fica na ficha do passageiro. Entre os " + achNf(PAINEL.temos) + " contabilizados — a mesma base do “já temos” — ele está preenchido em " + achNf(PAINEL.confirmaram) + ": " + achNf(PAINEL.confirmouSim) + " como “vai participar” e " + achNf(PAINEL.confirmouOutro) + " com outra resposta.",
+      "Piloto, aspirante e controlador não têm onde confirmar. Por isso a conta não é feita sobre as " + achNf(PAINEL.pessoas) + " pessoas distintas da base: o excedente seria gente que nem tem o campo, e o “sem confirmação” passaria do “já temos”."],
+   warn:"Os números desta tela são cadastro, não participação confirmada. Apresentar “já temos” como presença garantida seria falso: " + achNf(PAINEL.semConfirmacao) + " dos " + achNf(PAINEL.temos) + " contabilizados nunca confirmaram."},
+  {n:"03", t:achNf(PAINEL.aspiranteConvertido) + " aspirantes já viraram piloto", d:"dupla contagem evitada",
+   p:["A lista de aspirantes tem " + achNf(PAINEL.aspiranteTotal) + " linhas, mas " + achNf(PAINEL.aspiranteConvertido) + " já foram convertidas e aparecem também na lista de pilotos.",
+      "Somar as duas listas inteiras inflaria a base em " + achNf(PAINEL.aspiranteConvertido) + " pessoas. Outros " + achNf(PAINEL.aspiranteMesclado) + " registros estão marcados como mesclados."],
+   warn:"Qualquer relatório que some aspirantes e pilotos sem descontar a conversão está inflado."},
+  {n:"04", t:achNf(PAINEL.planoBateramBruto - PAINEL.planoBateramLimpo) + " pilotos só batem a meta com gente da equipe",
+   d:achNf(PAINEL.planoBateramBruto) + " batem no bruto · " + achNf(PAINEL.planoBateramLimpo) + " sem a equipe",
+   p:["O plano de cada piloto é a meta dele: " + achNf(achP40.pilotos) + " pilotos ativos têm meta 40 e " + achNf(achP20.pilotos) + " têm meta 20. Contando os passageiros no bruto, " + achNf(PAINEL.planoBateramBruto) + " pilotos alcançaram a própria meta.",
+      "Mas, entre os contabilizados, " + achNf(P_PILOTOS) + " passageiros são pilotos e " + achNf(P_CONTROLADORES) + " são controladores — a equipe aparecendo como captação, as mesmas linhas da caixa embaixo do balão. " + achNf(PAINEL.pilotoProprioPlano) + " desses pilotos estão cadastrados no próprio plano. Descontando a equipe, " + achNf(PAINEL.planoBateramLimpo) + " pilotos batem a meta.",
+      "São " + achNf(PAINEL.planoBateramBruto - PAINEL.planoBateramLimpo) + " pilotos cuja meta só fecha porque o plano inclui alguém que já é da equipe."],
+   warn:"Antes de premiar ou cobrar por meta batida, use o número limpo: " + achNf(PAINEL.planoBateramLimpo) + ", não " + achNf(PAINEL.planoBateramBruto) + "."},
+  {n:"05", t:"O Plano 20 está praticamente parado",
+   d:achNf(achP20.pilotos) + " pilotos · " + achNf(achP20.n) + " cadastros",
+   p:[achNf(achP20.pilotos) + " pilotos ativos têm meta 20. Juntos, trouxeram " + achNf(achP20.n) + " passageiros sem contar a equipe — " +
+        (PAINEL.p20Bateram ? achNf(PAINEL.p20Bateram) + " bateram a meta." : "nenhum bateu a meta."),
+      "O plano de meta 40 tem " + achNf(achP40.pilotos) + " pilotos e " + achNf(achP40.n) + " passageiros. O de meta 20 reúne " + achPct(achP20.pilotos, achP40.pilotos + achP20.pilotos) + "% dos pilotos dos dois planos e praticamente nenhum resultado.",
+      "Vale checar se esses pilotos foram ativados, se receberam material, ou se a meta 20 foi atribuída a um grupo que ainda não começou."],
+   warn:"Não é queda de produtividade: é ausência de produção. " + achNf(achP20.pilotos) + " pessoas com meta e " + achNf(achP20.n) + " cadastros."},
+  {n:"06", t:"A etiqueta de plano não bate com a meta",
+   d:"etiqueta P40 em " + achNf(PAINEL.tagP40) + " · meta 40 em " + achNf(achP40.pilotos),
+   p:["Existem duas marcações de plano na base e elas discordam. A etiqueta P40 está em " + achNf(PAINEL.tagP40) + " pilotos ativos; a meta 40 vale para " + achNf(achP40.pilotos) + ". A etiqueta P20 está em " + achNf(PAINEL.tagP20) + "; a meta 20 vale para " + achNf(achP20.pilotos) + ".",
+      "Esta tela usa a META, que é o que define o plano de fato. A etiqueta ficou como marcação paralela.",
+      "Enquanto as duas existirem, relatório que agrupa por etiqueta e relatório que agrupa por meta vão dar números diferentes para a mesma pergunta."],
+   warn:null},
+  {n:"07", t:"Só " + achNf(PAINEL.pilotosQueBateram) + " pilotos atingiram a própria expectativa",
+   d:"de " + achNf(PAINEL.pilotosLancaram) + " que lançaram acima de zero · " + achPct(PAINEL.pilotosQueBateram, PAINEL.pilotosLancaram) + "%",
+   p:["A Expectativa Real é a última expectativa lançada de cada piloto ativo.",
+      "Confrontando com os passageiros efetivamente cadastrados por cada um, " + achNf(PAINEL.pilotosQueBateram) + " dos " + achNf(PAINEL.pilotosLancaram) + " que lançaram um número acima de zero alcançaram ou passaram o próprio número.",
+      "A leitura agregada esconde a distribuição: o Cumprido da real do total não se repete no piloto individual."],
+   warn:"Não use o percentual agregado para dizer que o time está perto da meta — quase ninguém está, individualmente."},
+  {n:"08", t:"Só " + achPct(PAINEL.pilotosComLinha, PAINEL.pilotosNoAr) + "% dos pilotos lançaram expectativa",
+   d:achNf(PAINEL.pilotosComLinha) + " de " + achNf(PAINEL.pilotosNoAr) + " · " + achNf(PAINEL.pilotosLancaram) + " acima de zero",
+   p:[achNf(PAINEL.pilotosNoAr) + " pilotos estão ativos e " + achNf(PAINEL.pilotosComLinha) + " já lançaram expectativa alguma vez. Desses, " + achNf(PAINEL.pilotosLancaram) + " lançaram um número acima de zero.",
+      "Quem nunca lançou fica fora da Expectativa Real — o que não quer dizer que não trouxe ninguém: os passageiros entram em Contabilizados mesmo sem lançamento.",
+      "Por isso a Expectativa Real é o compromisso de uma parte do time. A Expectativa Projetada, a soma das metas de todos os pilotos ativos, é " + achNf(PAINEL.projetada) + "."],
+   warn:"A Expectativa Real de " + achNf(PAINEL.meta) + " vem de " + achNf(PAINEL.pilotosComLinha) + " pilotos. Se o restante lançar, ela sobe."},
+  {n:"09", t:"Equipe, cidade e time cobrem a base toda",
+   d:"equipe " + achPct(achSoma(EQUIPES), PAINEL.contabilizados) + "% · cidade " + achPct(achSoma(DIM_CIDADE), PAINEL.contabilizados) +
+     "% · time " + achPct(achSoma(TIMES_ORDEM), PAINEL.contabilizados) + "% · plano " + achPct(achSoma(DIM_PLANO), PAINEL.contabilizados) +
+     "% · região " + achPct(achSoma(DIM_REGIAO), PAINEL.contabilizados) + "%",
+   p:["As dimensões do trilho têm coberturas diferentes, e cada uma anuncia a sua.",
+      "Equipe, cidade e time cobrem praticamente todos os contabilizados — piloto sem time cai em “Sem time”. Plano, pela meta do piloto, deixa de fora o passageiro que é da equipe. A região marcada no piloto cobre só uma fatia."],
+   warn:"Uma fatia de " + achPct(achSoma(DIM_REGIAO), PAINEL.contabilizados) + "% não pode ser lida como o retrato do time. Leia a linha de cobertura antes de comparar recortes."}
+];
+
+const fmt = n => n.toLocaleString("pt-BR");
+const pct = (n,d) => (100*n/d).toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1});
+
+const cumpridoDaReal = () => (PAINEL.pilotosComLinha > 0 && PAINEL.meta > 0)
+  ? Math.round(100 * PAINEL.temos / PAINEL.meta) + "%" : "—";
+const $ = s => document.querySelector(s);
+const el = (t,c) => { const e = document.createElement(t); if (c) e.className = c; return e; };
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+let group = "Todos", meta = PAINEL.meta;
+
+const tip = $("#tip");
+function showTip(target, spec){
+  tip.textContent = "";
+  const v = el("div","tv"); v.textContent = spec.value; tip.append(v);
+  const l = el("div","tl"); l.textContent = spec.label; tip.append(l);
+  (spec.rows||[]).forEach(r => {
+    const row = el("div","tr");
+    const k = el("span","tk"); k.style.background = r.color; row.append(k);
+    const t = document.createElement("span"); t.textContent = r.text; row.append(t);
+    tip.append(row);
+  });
+  if (spec.hint){ const h = el("div","th"); h.textContent = spec.hint; tip.append(h); }
+  tip.classList.add("on");
+  tipNode = target;
+  const r = target.getBoundingClientRect(), t = tip.getBoundingClientRect();
+  let x, y;
+  
+  const cabeAEsquerda = r.left > t.width + 14;
+  const estreito = r.width < 330;
+  if (estreito && cabeAEsquerda){
+    x = r.left - t.width - 10;
+    y = r.top + r.height/2 - t.height/2;
+  } else {
+    x = r.left + r.width/2 - t.width/2;
+    y = r.top - t.height - 8;
+    if (y < 6) y = r.bottom + 8;
+  }
+  tip.style.left = Math.max(6, Math.min(x, innerWidth - t.width - 6)) + "px";
+  tip.style.top = Math.max(6, Math.min(y, innerHeight - t.height - 6)) + "px";
+}
+let tipNode = null;
+const hideTip = () => { tip.classList.remove("on"); tipNode = null; };
+
+document.addEventListener("pointerover", e => {
+  if (tipNode && !tipNode.contains(e.target)) hideTip();
+}, true);
+document.addEventListener("click", e => {
+  if (!tipNode || !tipNode.contains(e.target)) hideTip();
+}, true);
+function bindTip(node, spec){
+  const show = () => showTip(node, typeof spec === "function" ? spec() : spec);
+  node.addEventListener("pointerenter", show);
+  node.addEventListener("focus", show);
+  node.addEventListener("pointerleave", hideTip);
+  node.addEventListener("blur", hideTip);
+}
+
+const ov = $("#ov");
+let lastFocus = null;
+function openOverlay(spec){
+  lastFocus = document.activeElement;
+  hideTip();
+  $("#ov-eyebrow").textContent = spec.eyebrow || "";
+  $("#ov-title").textContent = spec.title || "";
+  const body = $("#ov-body");
+  body.textContent = "";
+  if (spec.voltar){
+    const vb = el("button","ghost ov-back"); vb.type = "button";
+    vb.textContent = "← " + spec.voltar.label;
+    vb.addEventListener("click", spec.voltar.abrir);
+    body.append(vb);
+  }
+  if (spec.hero){
+    const h = el("div","ov-hero");
+    const a = el("span","h"); a.textContent = spec.hero; h.append(a);
+    if (spec.heroSub){ const b = el("span","hs"); b.textContent = spec.heroSub; h.append(b); }
+    body.append(h);
+  }
+  if (spec.viz){ const v = el("div","ov-viz"); v.append(spec.viz); body.append(v); }
+  (spec.sections||[]).forEach(sec => {
+    if (!sec) return;
+    const s = el("div","ov-sec");
+    if (sec.h){ const h4 = document.createElement("h4"); h4.textContent = sec.h; s.append(h4); }
+    (sec.p||[]).forEach(txt => { const p = document.createElement("p"); p.textContent = txt; s.append(p); });
+    if (sec.rows){
+      const table = document.createElement("table"), tb = document.createElement("tbody");
+      sec.rows.forEach(([k,v]) => {
+        const tr = document.createElement("tr");
+        const a = document.createElement("td"); a.textContent = k;
+        const b = document.createElement("td"); b.className = "n"; b.textContent = v;
+        tr.append(a,b); tb.append(tr);
+      });
+      table.append(tb); s.append(table);
+    }
+    if (sec.warn){ const w = el("div","note"); w.textContent = sec.warn; s.append(w); }
+    if (sec.link){
+      const a = document.createElement("a");
+      a.className = "ov-link"; a.href = sec.link.href; a.target = "_blank"; a.rel = "noopener";
+      a.textContent = sec.link.label + " ↗"; s.append(a);
+    }
+    body.append(s);
+  });
+  if (!ov.open) ov.showModal();
+  ov.scrollTop = 0;
+}
+$("#ov-close").addEventListener("click", () => ov.close());
+ov.addEventListener("click", e => {
+  if (e.target === ov || e.target.classList.contains("ov-wrap")) ov.close();
+});
+ov.addEventListener("close", () => { if (lastFocus && lastFocus.isConnected) lastFocus.focus(); });
+
+function miniStack(yes, no, cy, cn, rotulos){
+  const wrap = el("div");
+  const bar = el("div","stack"); bar.style.height = "16px";
+  const a = el("div","seg"); a.style.background = cy; a.style.flex = yes; a.style.cursor = "default";
+  bar.append(a);
+  if (no > 0){ const b = el("div","seg"); b.style.background = cn; b.style.flex = no; b.style.cursor = "default"; bar.append(b); }
+  wrap.append(bar);
+  const total = yes + no, leg = el("div","legend");
+  const [rSim, rNao] = rotulos || ["Sim","Não"];
+  [[cy,rSim,yes],[cn,rNao,no]].forEach(([c,name,val]) => {
+    const s = document.createElement("span");
+    const i = document.createElement("i"); i.style.background = c; s.append(i);
+    s.append(document.createTextNode(name + " · " + fmt(val) + " (" + pct(val,total) + "%)"));
+    leg.append(s);
+  });
+  wrap.append(leg);
+  return wrap;
+}
+
+const NS = "http://www.w3.org/2000/svg";
+function svg(tag, attrs){
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  return n;
+}
+
+function ondaD(amp){
+  let d = "M -150 0 q 18.75 " + (-amp) + " 37.5 0";
+  for (let i = 0; i < 11; i++) d += " t 37.5 0";
+  return d + " V 210 H -150 Z";
+}
+const polar = (cx,cy,r,t) => { const a = Math.PI*(1-t); return [cx+r*Math.cos(a), cy-r*Math.sin(a)]; };
+function arcPath(cx,cy,r,t0,t1){
+  const [x0,y0] = polar(cx,cy,r,t0), [x1,y1] = polar(cx,cy,r,t1);
+  return "M " + x0 + " " + y0 + " A " + r + " " + r + " 0 0 1 " + x1 + " " + y1;
+}
+
+function drawGauge(){
+  const g = $("#gauge");
+  const w = 62, h = 36, cx = w/2, cy = 32, r = 25;
+  g.setAttribute("viewBox", "0 0 " + w + " " + h);
+  g.textContent = "";
+  const ok = group === "Todos", ratio = Math.min(PAINEL.temos/PAINEL.meta, 1);
+  const c1 = css("--s1"), ct = css("--track"), c3 = css("--ink-3");
+  g.append(svg("path",{d:arcPath(cx,cy,r,0,1),fill:"none",stroke:ct,"stroke-width":5,"stroke-linecap":"round"}));
+  if (ok){
+    const fill = svg("path",{d:arcPath(cx,cy,r,0,ratio),fill:"none",stroke:c1,
+      "stroke-width":5,"stroke-linecap":"round",class:"arc",tabindex:"0",role:"button"});
+    fill.setAttribute("aria-label","Contabilizados que já temos");
+    bindTip(fill, () => ({
+      value: fmt(PAINEL.temos),
+      label: "Já temos · Contabilizados",
+      rows: [{color:c1, text: cumpridoDaReal() + " cumprido da Expectativa Real de " + fmt(PAINEL.meta)}],
+      hint: "Clique para ver as metas"
+    }));
+    fill.addEventListener("click", openMetaOverlay);
+    fill.addEventListener("keydown", e => {
+      if (e.key === "Enter" || e.key === " "){ e.preventDefault(); openMetaOverlay(); }
+    });
+    g.append(fill);
+    const parado = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const grau = 180 * ratio, eixo = " " + cx + " " + cy;
+    const braco = svg("g");
+    braco.append(svg("line",{x1:cx, y1:cy, x2:cx-(r-8), y2:cy, stroke:c1,
+      "stroke-width":1.8, "stroke-linecap":"round", opacity:.92}));
+    if (parado){
+      braco.setAttribute("transform","rotate(" + grau + eixo + ")");
+    } else {
+      braco.append(svg("animateTransform",{attributeName:"transform", type:"rotate",
+        values:"0" + eixo + ";" + grau + eixo + ";0" + eixo,
+        keyTimes:"0;0.5;1", calcMode:"spline",
+        keySplines:".45 0 .2 1;.45 0 .2 1",
+        dur:"3.4s", repeatCount:"indefinite"}));
+    }
+    g.append(braco);
+    g.append(svg("circle",{cx:cx,cy:cy,r:2.4,fill:c1}));
+  }
+  $("#gauge-title").textContent = "Já temos";
+  $("#gauge-num").textContent = ok ? fmt(PAINEL.temos) : "—";
+  $("#gauge-base").textContent = ok
+    ? "contabilizados"
+    : "não verificado";
+  g.setAttribute("aria-label",(ok ? fmt(PAINEL.temos) + " contabilizados, " + cumpridoDaReal() + " cumprido da expectativa real" : "Dados não disponíveis"));
+}
+
+const AVIAO = "M10 0L2.5 -1.3L-2 -7L-4 -7L-1.5 -1.3L-7 -1.3L-8.5 -4L-10 -4"
+  + "L-9.2 -1.1L-11 0L-9.2 1.1L-10 4L-8.5 4L-7 1.3L-1.5 1.3L-4 7L-2 7L2.5 1.3Z";
+
+function drawRota(){
+  const g = $("#rota-svg");
+  if (!g) return;
+  const W = Math.max(300, g.clientWidth || 440), H = 118;
+  const padL = 3, padR = 3, padT = 22, padB = 15;
+  g.setAttribute("viewBox", "0 0 " + W + " " + H);
+  g.textContent = "";
+
+  const dados = CAPTACAO;
+  const vals = dados.map(d => d[1]);
+  
+  const emCurso = dados.length - 1;
+  const fech = vals.slice(0, emCurso);
+  const escala = Math.max.apply(null, vals);
+  const max = Math.max.apply(null, fech), min = Math.min.apply(null, fech);
+  const media = fech.reduce((a,b) => a+b, 0) / fech.length;
+  const iMax = fech.indexOf(max), iMin = fech.indexOf(min);
+  const base = H - padB;
+  const slot = (W - padL - padR) / dados.length;
+  const larg = Math.max(3, slot * 0.6);
+  const cx = i => padL + slot*i + slot/2;
+  const y  = v => padT + (1 - v/escala) * (base - padT);
+
+  const c1 = css("--s1"), cb = css("--brand"), c3 = css("--ink-3"), ct = css("--track");
+  const dia = iso => new Date(iso + "T12:00:00").toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"});
+
+  dados.forEach((d,i) => {
+    const x = cx(i) - larg/2, alt = Math.max(1.5, base - y(d[1]));
+    if (i === emCurso){
+      
+      g.append(svg("rect",{x:x, y:base-alt, width:larg, height:alt, rx:1.6,
+        fill:cb, "fill-opacity":.18, stroke:cb, "stroke-width":1,
+        "stroke-dasharray":"2 2"}));
+      return;
+    }
+    g.append(svg("rect",{x:x, y:base-alt, width:larg, height:alt, rx:1.6,
+      fill:c1, opacity: d[1] >= media ? .95 : .45}));
+  });
+
+  const ym = y(media);
+  g.append(svg("line",{x1:padL, y1:ym, x2:W-padR, y2:ym, stroke:ct,
+    "stroke-width":1, "stroke-dasharray":"2 3"}));
+  const rot = svg("text",{x:padL+2, y:ym-3, fill:c3, "font-size":8});
+  rot.textContent = "média " + Math.round(media);
+  g.append(rot);
+
+  let linha = "M " + cx(0) + " " + y(dados[0][1]);
+  for (let i = 1; i < dados.length; i++) linha += " L " + cx(i) + " " + y(dados[i][1]);
+  g.append(svg("path",{id:"rota-linha", d:linha, fill:"none", stroke:cb,
+    "stroke-width":1.4, opacity:.5, "stroke-linejoin":"round"}));
+
+  [[iMax,"topo"],[iMin,"vale"]].forEach(par => {
+    const i = par[0], acimaDaBarra = par[1] === "topo";
+    const px = cx(i), py = y(dados[i][1]);
+    g.append(svg("circle",{cx:px, cy:py, r:2.6, fill:cb}));
+    const ancora = px < 46 ? "start" : (px > W-46 ? "end" : "middle");
+    const t1 = svg("text",{x:px, y: acimaDaBarra ? py-11 : py-11, "text-anchor":ancora,
+      fill:cb, "font-size":9.5, "font-weight":700});
+    t1.textContent = fmt(dados[i][1]);
+    const t2 = svg("text",{x:px, y: acimaDaBarra ? py-3 : py-3, "text-anchor":ancora,
+      fill:c3, "font-size":8});
+    t2.textContent = dia(dados[i][0]);
+    g.append(t1, t2);
+  });
+
+  dados.forEach((d,i) => {
+    const alvo = svg("rect",{x:cx(i)-slot/2, y:padT-8, width:slot, height:base-padT+16,
+      fill:"transparent", class:"ponto", tabindex:"0", role:"button"});
+    alvo.setAttribute("aria-label", dia(d[0]) + ": " + fmt(d[1]) + " passageiros"
+      + (i === emCurso ? ", dia em andamento" : ""));
+    bindTip(alvo, {
+      value: fmt(d[1]),
+      label: new Date(d[0] + "T12:00:00").toLocaleDateString("pt-BR",
+        {weekday:"short", day:"2-digit", month:"short"}),
+      rows: [ i === emCurso
+        ? {color: cb, text: "dia em andamento — ainda vai subir"}
+        : {color: d[1] >= media ? cb : c1,
+           text: (d[1] >= media ? "acima" : "abaixo") + " da média (" + Math.round(media) + ")"}],
+      hint: "Dados fictícios de demonstração"
+    });
+    alvo.addEventListener("click", openRotaOverlay);
+    g.append(alvo);
+  });
+
+  dados.forEach((d,i) => {
+    if (i % 5 !== 0 && i !== dados.length-1) return;
+    const t = svg("text",{x:cx(i), y:H-4, "text-anchor":"middle", fill:c3, "font-size":7.5});
+    t.textContent = dia(d[0]);
+    g.append(t);
+  });
+
+  const parado = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const av = svg("g",{class:"aviao"});
+  av.append(svg("circle",{cx:0, cy:0, r:8, fill:cb, opacity:.18}));
+  av.append(svg("path",{d:AVIAO, fill:cb}));
+  if (parado){
+    av.setAttribute("transform","translate(" + cx(dados.length-1) + "," + y(vals[vals.length-1]) + ")");
+  } else {
+    const mov = svg("animateMotion",{dur:"18s", repeatCount:"indefinite", rotate:"auto"});
+    const mp = svg("mpath");
+    mp.setAttribute("href","#rota-linha");
+    mp.setAttributeNS("http://www.w3.org/1999/xlink","xlink:href","#rota-linha");
+    mov.append(mp); av.append(mov);
+  }
+  g.append(av);
+
+  const total = vals.reduce((a,b) => a+b, 0);
+  const ultimo = dados[dados.length-1];
+  $("#rota-stats").textContent = "";
+  [["Nos " + dados.length + " dias", fmt(total)], ["Melhor · " + dia(dados[iMax][0]), fmt(max)],
+   ["Ontem", fmt(vals[vals.length-2])], ["Hoje", fmt(ultimo[1])]].forEach(par => {
+    const d = el("div");
+    const sp = document.createElement("span"); sp.textContent = par[0];
+    const b = document.createElement("b"); b.textContent = par[1];
+    d.append(sp, b); $("#rota-stats").append(d);
+  });
+  $("#rota-periodo").textContent = dia(dados[0][0]) + " a " + dia(ultimo[0]);
+  $("#rota-eixo").textContent = "";
+  g.setAttribute("aria-label", "Cadastros por dia, de " + fmt(min) + " a " + fmt(max) + " passageiros");
+}
+
+function ritmoPista(){
+  
+  const fech = CAPTACAO.slice(0, CAPTACAO.length - 1).slice(-7);
+  const media = fech.length ? fech.reduce((a,d) => a + d[1], 0) / fech.length : 0;
+  const alvo = meta && meta > 0 ? meta : PAINEL.meta;
+  const falta = Math.max(alvo - PAINEL.temos, 0);
+  const dias = media > 0 ? Math.ceil(falta / media) : null;
+  let quando = null;
+  if (dias !== null){
+    const hoje = new Date(CAPTACAO[CAPTACAO.length-1][0] + "T12:00:00");
+    hoje.setDate(hoje.getDate() + dias);
+    quando = hoje.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"});
+  }
+  return {media, alvo, falta, dias, quando};
+}
+
+function drawPista(){
+  const g = $("#pista-svg");
+  if (!g) return;
+  const W = Math.max(300, g.clientWidth || 440), H = Math.max(112, g.clientHeight || 112);
+  g.setAttribute("viewBox", "0 0 " + W + " " + H);
+  g.textContent = "";
+  const parado = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const c1 = css("--s1"), c2 = css("--s2"), c3 = css("--ink-3"), ci = css("--ink");
+  const R = ritmoPista();
+  const ratio = R.alvo > 0 ? Math.min(PAINEL.temos / R.alvo, 1) : 0;
+
+  const x0 = 26, x1 = W - 58;          
+  const pH = 30, pY = H - pH - 26;      
+  const meio = pY + pH/2;
+  const xb = x0 + (x1 - x0) * ratio;    
+
+  g.append(svg("rect",{x:6, y:pY, width:W-12, height:pH, rx:5, fill:css("--pista"),
+    stroke:css("--pista-borda"), "stroke-width":1}));
+  
+  [[12, 1],[W-22, 1]].forEach(par => {
+    for (let k = 0; k < 4; k++) g.append(svg("rect",{x:par[0], y:pY+4+k*6.2, width:9, height:3,
+      fill:css("--faixa"), opacity:.75}));
+  });
+  
+  [.25,.5,.75,1].forEach(t => {
+    const x = x0 + (x1 - x0)*t;
+    g.append(svg("line",{x1:x, y1:pY+pH+2, x2:x, y2:pY+pH+7, stroke:c3, "stroke-width":1}));
+    const tx = svg("text",{x:x, y:pY+pH+17, "text-anchor": t === 1 ? "end" : "middle", fill:c3, "font-size":8.5});
+    
+    tx.textContent = Math.round(t*100) + "%" + ((x1 - x0) > 520 ? " · " + fmt(Math.round(R.alvo*t)) : "");
+    if (t === 1) tx.setAttribute("x", x + 22);
+    g.append(tx);
+  });
+
+  g.append(svg("rect",{x:x0, y:meio-2.5, width:Math.max(xb-x0,0), height:5, rx:2.5, fill:c1}));
+  if (x1 > xb){
+    const resto = svg("line",{x1:xb, y1:meio, x2:x1-14, y2:meio, stroke:c2, "stroke-width":3,
+      "stroke-dasharray":"10 7", "stroke-linecap":"round"});
+    if (!parado) resto.append(svg("animate",{attributeName:"stroke-dashoffset",
+      values:"17;0", dur:"0.9s", repeatCount:"indefinite"}));
+    g.append(resto);
+  }
+
+  const nLuz = Math.floor((W-24)/22);
+  for (let k = 0; k <= nLuz; k++){
+    const x = 12 + k*22;
+    [pY-1, pY+pH+1].forEach(yy => {
+      const luz = svg("circle",{cx:x, cy:yy, r:1.7, fill:css("--luz-pista"), opacity:.35});
+      if (!parado) luz.append(svg("animate",{attributeName:"opacity", values:".25;1;.25",
+        dur:"1.6s", begin:(k*0.08).toFixed(2) + "s", repeatCount:"indefinite"}));
+      g.append(luz);
+    });
+  }
+
+  const av = svg("g",{transform:"translate(" + x1 + " " + (meio-3) + ")"});
+  const avCorpo = svg("g");
+  avCorpo.append(svg("ellipse",{cx:-4, cy:9, rx:24, ry:3, fill:"#000", opacity:.25}));
+  const silh = svg("path",{d:AVIAO, fill:c2, transform:"scale(2.3)"});
+  avCorpo.append(silh);
+  if (!parado) avCorpo.append(svg("animateTransform",{attributeName:"transform", type:"translate",
+    values:"0 0;0 -2.5;0 0", dur:"2.4s", repeatCount:"indefinite"}));
+  av.append(avCorpo);
+  g.append(av);
+  const tAv1 = svg("text",{x:x1+22, y:pY-26, "text-anchor":"end", fill:c2, "font-size":12, "font-weight":750});
+  tAv1.textContent = fmt(R.alvo);
+  const tAv2 = svg("text",{x:x1+22, y:pY-13, "text-anchor":"end", fill:c3, "font-size":8.5});
+  tAv2.textContent = meta === PAINEL.meta ? "Expectativa Real" : "meta simulada";
+  g.append(tAv1, tAv2);
+
+  const esc = Math.min(1.7, Math.max(1.15, H / 110));
+  const boneco = svg("g",{transform:"translate(" + xb.toFixed(1) + " " + (meio-2) + ") scale(" + esc.toFixed(2) + ")"});
+  const corpo = svg("g",{transform:"rotate(12)"});
+  const traco = {stroke:c1, "stroke-width":2.6, "stroke-linecap":"round", fill:"none"};
+  const membro = (x2, y2, px, py, de, ate) => {
+    const m = svg("line", Object.assign({x1:px, y1:py, x2:x2, y2:y2}, traco));
+    if (!parado) m.append(svg("animateTransform",{attributeName:"transform", type:"rotate",
+      values:de + " " + px + " " + py + ";" + ate + " " + px + " " + py + ";" + de + " " + px + " " + py,
+      dur:".42s", repeatCount:"indefinite"}));
+    return m;
+  };
+  
+  corpo.append(membro(0, 0, 0, -10, -35, 35));
+  corpo.append(membro(0, 0, 0, -10, 35, -35));
+  corpo.append(svg("line", Object.assign({x1:0, y1:-10, x2:0, y2:-21}, traco)));
+  corpo.append(membro(0, -13, 0, -20, 40, -40));
+  corpo.append(membro(0, -13, 0, -20, -40, 40));
+  corpo.append(svg("circle",{cx:0, cy:-25.5, r:4, fill:c1}));
+  if (!parado) corpo.append(svg("animateTransform",{attributeName:"transform", type:"translate",
+    values:"0 0;0 -1.8;0 0", dur:".21s", repeatCount:"indefinite", additive:"sum"}));
+  boneco.append(corpo);
+  g.append(boneco);
+  const anc = xb < 70 ? "start" : "middle";
+  const topoB = meio - 2 - 30*esc;
+  const tB1 = svg("text",{x:xb, y:topoB-15, "text-anchor":anc, fill:c1, "font-size":12, "font-weight":750});
+  tB1.textContent = fmt(PAINEL.temos);
+  const tB2 = svg("text",{x:xb, y:topoB-4, "text-anchor":anc, fill:c3, "font-size":8.5});
+  tB2.textContent = "já temos · " + Math.round(ratio*100) + "%";
+  
+  if (x1 - xb < 95){ tB1.setAttribute("y", topoB-29); tB2.setAttribute("y", topoB-18); }
+  g.append(tB1, tB2);
+
+  if (R.falta > 0 && x1 - xb > 90){
+    const tv = svg("text",{x:(xb + x1)/2, y:meio-8, "text-anchor":"middle", fill:ci,
+      "font-size":9.5, "font-weight":700});
+    tv.textContent = "faltam " + fmt(R.falta);
+    g.append(tv);
+  }
+
+  g.setAttribute("aria-label", "Pista: já temos " + fmt(PAINEL.temos) + " de " + fmt(R.alvo)
+    + ", faltam " + fmt(R.falta));
+
+  $("#pista-tag").textContent = Math.round(ratio*100) + "% da pista";
+  const st = $("#pista-stats");
+  st.textContent = "";
+  [["Já temos", fmt(PAINEL.temos)], ["Avião · real", fmt(R.alvo)], ["Faltam", fmt(R.falta)],
+   ["Ritmo 7 dias", Math.round(R.media).toLocaleString("pt-BR") + "/dia"],
+   ["Alcança em", R.falta === 0 ? "alcançou" : (R.dias === null ? "—" : "~" + R.dias + " dias · " + R.quando)]]
+    .forEach(par => {
+      const d = el("div");
+      const sp = document.createElement("span"); sp.textContent = par[0];
+      const b = document.createElement("b"); b.textContent = par[1];
+      d.append(sp, b); st.append(d);
+    });
+  $("#pista-fonte").textContent = "Contabilizados × Expectativa Real · o ritmo é uma estimativa pelos cadastros dos 7 últimos dias fechados";
+}
+
+function openPistaOverlay(){
+  const R = ritmoPista();
+  openOverlay({
+    eyebrow:"Pista da expectativa",
+    title:"O time correndo atrás do avião",
+    hero:fmt(R.falta),
+    heroSub:"faltam para alcançar a Expectativa Real",
+    viz:miniStack(PAINEL.temos, R.falta, css("--s1"), css("--s2"), ["Já temos","Faltam"]),
+    sections:[
+      {h:"Leitura da pista", rows:[
+        ["Avião · Expectativa Real", fmt(R.alvo)],
+        ["Bonequinho · Contabilizados", fmt(PAINEL.temos)],
+        ["Faltam", fmt(R.falta)],
+        ["Ritmo dos 7 últimos dias fechados", Math.round(R.media).toLocaleString("pt-BR") + " cadastros/dia"],
+        ["Nesse ritmo, alcança em", R.falta === 0 ? "já alcançou" : (R.dias === null ? "—" : "~" + R.dias + " dias (" + R.quando + ")")]
+      ]},
+      {h:"Como ler", p:[
+        "O avião é o quanto devemos ter: a Expectativa Real. O bonequinho é o quanto já temos: os Contabilizados. A posição dele na pista é o Cumprido da real.",
+        "O trecho laranja é a mesma previsão que falta da metade esquerda do balão: cada cadastro empurra o bonequinho para a frente e encurta o laranja."
+      ]},
+      {warn:"O avião também anda: quando mais pilotos lançam expectativa, a Expectativa Real sobe. E o ritmo usa todos os cadastros da rota da captação, então a data é uma estimativa, não uma promessa."}
+    ]
+  });
+}
+
+function openRotaOverlay(){
+  const vals = CAPTACAO.map(d => d[1]);
+  const total = vals.reduce((a,b) => a+b, 0);
+  const fech = vals.slice(0, vals.length - 1);
+  const max = Math.max.apply(null, fech), min = Math.min.apply(null, fech);
+  const media = fech.reduce((a,b) => a+b, 0) / fech.length;
+  const acima = fech.filter(v => v >= media).length;
+  const br = iso => iso.split("-").reverse().join("/");
+  openOverlay({
+    eyebrow:"Rota da captação · " + CAPTACAO.length + " dias",
+    title:"Cadastros por dia",
+    hero:fmt(total),
+    heroSub:"passageiros no período",
+    sections:[
+      {h:"Leitura do voo", rows:[
+        ["Melhor dia", fmt(max) + " em " + br(CAPTACAO[fech.indexOf(max)][0])],
+        ["Pior dia", fmt(min) + " em " + br(CAPTACAO[fech.indexOf(min)][0])],
+        ["Média diária", Math.round(media).toLocaleString("pt-BR")],
+        ["Dias acima da média", acima + " de " + fech.length + " dias fechados"],
+        ["Último dia, em andamento", fmt(CAPTACAO[CAPTACAO.length-1][1])]
+      ]},
+      {h:"De onde vem cada ponto", p:[
+        "Cada ponto é a quantidade de passageiros cadastrados naquele dia. Nesta demonstração os valores são fictícios, gerados com semente fixa.",
+        "Numa base real, o dia deve ser cortado no fuso local e não em UTC: cortar em UTC empurra o que foi feito à noite para o dia seguinte."
+      ]},
+      {h:"Por que o último dia é desenhado diferente", p:[
+        "A última barra tem contorno tracejado em vez de preenchimento: ela ainda está contando. Por isso fica fora da média e não concorre a melhor nem a pior dia — de manhã ela seria sempre o pior do mês, e isso não é informação, é hora do dia.",
+        "A rota mostra os últimos " + CAPTACAO.length + " dias. Um dia sem nenhum cadastro aparece como zero, em vez de sumir do gráfico."
+      ]},
+      {warn:"O último dia está em andamento — ainda vai subir até o fim do expediente. Não compare com um dia fechado."}
+    ]
+  });
+}
+
+function openGroupOverlay(name){
+  openOverlay({
+    eyebrow:"Recorte",
+    title:name,
+    hero:"—",
+    heroSub:"sem contagem verificada",
+    sections:[
+      {h:"Por que está vazio", p:[
+        "Este recorte não tem contagem conferida.",
+        "“—” significa indisponível, não zero: não há como afirmar que o recorte teve zero cadastros."
+      ]},
+      {warn:"Selecionar este recorte esvazia os indicadores da tela de propósito, para não exibir número que a base não sustenta."}
+    ]
+  });
+}
+
+function openMetaOverlay(){
+  const lancou = PAINEL.pilotosComLinha > 0;
+  const pctLancou = PAINEL.pilotosNoAr ? Math.round(100 * PAINEL.pilotosComLinha / PAINEL.pilotosNoAr) : 0;
+  openOverlay({
+    eyebrow:"Metas do clube",
+    title:"Quanto devemos ter",
+    hero: lancou ? fmt(PAINEL.meta) : "—",
+    heroSub:"Expectativa Real",
+    viz:miniStack(PAINEL.temos, PAINEL.faltam, css("--s1"), css("--s2"), ["Contabilizados","Faltam"]),
+    sections:[
+      {h:"Os números do painel", rows:[
+        ["Expectativa Projetada", fmt(PAINEL.projetada)],
+        ["Expectativa Real", lancou ? fmt(PAINEL.meta) : "—"],
+        ["Contabilizados", fmt(PAINEL.temos)],
+        ["Previsão", fmt(PAINEL.temos + PAINEL.meta)],
+        ["Previsão que falta (laranja do balão)", fmt(PAINEL.faltam)],
+        ["Cumprido da real", cumpridoDaReal()],
+        ["Lançaram expectativa", fmt(PAINEL.pilotosComLinha) + " de " + fmt(PAINEL.pilotosNoAr) + " pilotos (" + pctLancou + "%)"]
+      ]},
+      {h:"De onde vem cada número", p:[
+        "Expectativa Projetada é a soma das metas dos pilotos ativos. Ninguém digita: mede o tamanho do programa, não uma promessa.",
+        "Expectativa Real é a última expectativa lançada de cada piloto ativo. Quem lançou zero preencheu e entra com zero; quem nunca lançou fica de fora — por isso aparece traço, e não zero, quando ninguém lançou.",
+        "Contabilizados são os passageiros ativos cadastrados pelos pilotos ativos. Previsão é Contabilizados mais Expectativa Real. Cumprido da real é Contabilizados dividido pela Expectativa Real.",
+        "Pessoas distintas na base são outra pergunta: " + fmt(PAINEL.pessoas) + " pessoas diferentes somando membros, pilotos, aspirantes e controladores, cada uma contada uma vez. Ficam no detalhe do “Já temos” e não entram no percentual."
+      ]},
+      {warn:"Apenas " + fmt(PAINEL.pilotosQueBateram) + " de " + fmt(PAINEL.pilotosLancaram) +
+        " pilotos que lançaram um número acima de zero (" + pct(PAINEL.pilotosQueBateram, PAINEL.pilotosLancaram) +
+        "%) já atingiram a própria expectativa. O avanço agregado não se repete no piloto individual."}
+    ]
+  });
+}
+
+function openTemosOverlay(){
+  openOverlay({
+    eyebrow:"Já temos · duas perguntas diferentes",
+    title:"Contabilizados e pessoas na base",
+    hero:fmt(PAINEL.temos),
+    heroSub:"contabilizados",
+    sections:[
+      {h:"O número do painel", rows:[
+        ["Contabilizados", fmt(PAINEL.temos)],
+        ["Expectativa Real", PAINEL.pilotosComLinha > 0 ? fmt(PAINEL.meta) : "—"],
+        ["Cumprido da real", cumpridoDaReal()]
+      ]},
+      {h:"Pessoas distintas na base", p:[
+        "Contabilizados conta os passageiros dos pilotos ativos. Somando também pilotos, aspirantes e controladores, a base tem " +
+        fmt(PAINEL.pessoas) + " pessoas diferentes — cada uma contada uma vez, pelo telefone, no papel mais alto."
+      ]},
+      {h:"Os contabilizados por papel", rows:PAINEL.passageiros.map(f => [f.nome + " · " + f.sub, fmt(f.n)])
+        .concat([["Total = Já temos", fmt(PAINEL.temos)]])},
+      {h:"Pessoas distintas na base, por papel", rows:PAINEL.fontes.map(f => [f.nome + " na base", fmt(f.n)])
+        .concat([["Total de pessoas", fmt(PAINEL.pessoas)]])},
+      {h:"A dupla contagem que foi evitada", p:[
+        "A lista de aspirantes tem " + fmt(PAINEL.aspiranteTotal) + " linhas, mas " +
+        fmt(PAINEL.aspiranteConvertido) + " delas já viraram piloto e aparecem também na lista de pilotos.",
+        "Por isso a linha “Aspirantes na base” conta " + fmt(PAINEL.fontes[2].n) +
+        ", não " + fmt(PAINEL.aspiranteTotal) + ". Somar as duas listas inteiras inflaria o total em " +
+        fmt(PAINEL.aspiranteConvertido) + " pessoas (" + pct(PAINEL.aspiranteConvertido, PAINEL.pessoas) + "% das pessoas).",
+        "Outros " + fmt(PAINEL.aspiranteMesclado) + " registros estão marcados como mesclados."
+      ]},
+      {warn:"Estes são cadastros, não participações confirmadas. " + fmt(PAINEL.semConfirmacao) +
+        " dos " + fmt(PAINEL.temos) + " contabilizados não confirmaram participação — só " +
+        fmt(PAINEL.confirmaram) + " responderam."}
+    ]
+  });
+}
+
+function openPassageiroOverlay(f){
+  const quem = {
+    "Membros": "Passageiros que só aparecem como passageiro: não são piloto, aspirante nem controlador em lugar nenhum da base.",
+    "Pilotos": "Pilotos cadastrados como passageiro de um plano — a equipe aparecendo como captação. " +
+      fmt(PAINEL.pilotoProprioPlano) + " deles estão no próprio plano. É isso que separa as metas batidas no bruto das batidas sem a equipe (ponto de atenção 04).",
+    "Aspirantes": "Aspirantes que ainda não viraram piloto e já estão como passageiro de alguém. Se forem convertidos, passam para a linha de pilotos — o total do balão não muda.",
+    "Controladores": "Controladores cadastrados como passageiro de um plano. Também é a equipe aparecendo como captação (ponto de atenção 04)."
+  }[f.nome];
+  openOverlay({
+    eyebrow:"Fontes de cadastro · contabilizados por papel",
+    title:f.nome,
+    hero:fmt(f.n),
+    heroSub:f.sub,
+    sections:[
+      {h:"Peso nos contabilizados", rows:[
+        [f.nome, fmt(f.n)],
+        ["Contabilizados", fmt(PAINEL.temos)],
+        ["Participação", pct(f.n, PAINEL.temos) + "%"]
+      ]},
+      {h:"Quem está nesta linha", p:[quem,
+        "Cada passageiro entra uma vez, no papel mais alto que ocupa na base: controlador, depois piloto, aspirante e só membro. As quatro linhas somam exatamente os " + fmt(PAINEL.temos) + " do balão."]},
+      f.nome === "Membros"
+        ? {warn: "Dos " + fmt(PAINEL.temos) + " contabilizados, " + fmt(PAINEL.semConfirmacao) +
+            " não confirmaram participação. São cadastros, não participações confirmadas."}
+        : null
+    ]
+  });
+}
+
+function openEquipeOverlay(d){
+  const f = FAMILIAS[d.fam];
+  openOverlay({
+    eyebrow:"Equipe · " + f.nome,
+    title:d.name,
+    hero:fmt(d.n),
+    heroSub:"passageiros trazidos",
+    viz:miniStack(d.n, Math.max(TOTAL_EQUIPES - d.n, 0), css(f.cor), css("--track")),
+    sections:[
+      {h:"Peso no total", rows:[
+        ["Trouxe", fmt(d.n)],
+        ["Pilotos na equipe", fmt(d.pilotos)],
+        ["Média por piloto", d.pilotos ? (d.n/d.pilotos).toLocaleString("pt-BR",{maximumFractionDigits:1}) : "—"],
+        ["Do que já entrou", pct(d.n, TOTAL_EQUIPES) + "%"],
+        ["Da meta", pct(d.n, PAINEL.meta) + "%"]
+      ]},
+      {h:"Como este número é apurado", p:[
+        "Cadeia: a equipe do controlador, os pilotos ligados a ele e os passageiros que cada piloto cadastrou.",
+        "É contagem de pessoas cadastradas, não de participação confirmada."
+      ]},
+      d.name === "(sem equipe)"
+        ? {warn:"Estes cadastros entraram por controladores sem equipe definida. É o maior bloco da base: sem isso preenchido, boa parte do resultado não tem dono."}
+        : d.nota === "cauda somada"
+          ? {p:["Soma das equipes menores, que não cabem ao lado do balão. A lista completa está no trilho, em Equipe."]}
+          : null
+    ]
+  });
+}
+
+function openTimeOverlay(d){
+  const lancou = d.lanc > 0;
+  const f = FAMILIAS[d.fam];
+  openOverlay({
+    eyebrow:"Time do clube",
+    title:d.name,
+    hero:fmt(d.n),
+    heroSub:"contabilizados do time",
+    viz: lancou && d.ex > 0
+      ? miniStack(Math.min(d.n, d.ex), Math.max(d.ex - d.n, 0), css(f.cor), css("--track"), ["Já temos","Faltam para a real"])
+      : null,
+    sections:[
+      {h:"Os números do time", rows:[
+        ["Pilotos ativos", fmt(d.pilotos)],
+        ["Expectativa Projetada", fmt(d.proj)],
+        ["Expectativa Real", lancou ? fmt(d.ex) : "—"],
+        ["Contabilizados", fmt(d.n)],
+        ["Previsão", fmt(d.n + d.ex)],
+        ["Cumprido da real", lancou && d.ex > 0 ? Math.round(100*d.n/d.ex) + "%" : "—"],
+        ["Lançaram expectativa", fmt(d.lanc) + " de " + fmt(d.pilotos)],
+        ["Bateram a meta do time", fmt(d.bat)],
+        ["Pilotos em zero", fmt(d.zer)],
+        ["Do total contabilizado", pct(d.n, PAINEL.temos) + "%"]
+      ]},
+      {h:"De onde vem", p:[
+        "É o time do piloto no clube, com a mesma conta do balão: só piloto ativo e só passageiro ativo.",
+        d.slug === "SEM_TIME"
+          ? "Pilotos sem time escolhido. Eles têm meta; o que falta é o time."
+          : "A meta por piloto deste time é fixa: a Expectativa Projetada é essa meta vezes os pilotos ativos."
+      ]},
+      d.pilotos > 0 && d.n === 0
+        ? {warn:"O time tem " + fmt(d.pilotos) + " pilotos ativos e nenhum passageiro contabilizado."}
+        : (lancou && d.n > d.ex
+          ? {p:["O time já passou a própria Expectativa Real em " + fmt(d.n - d.ex) + " — a real é só de quem lançou, e " + fmt(d.pilotos - d.lanc) + " pilotos ainda não lançaram."]}
+          : null)
+    ]
+  });
+}
+
+function openCtrlOverlay(c, pos, soma){
+  const nome = c[0], equipe = c[1], pilotos = c[2], cadastrou = c[3];
+  openOverlay({
+    eyebrow:"Controlador · " + pos + "º de " + fmt(CTRL_TOTAL),
+    title:nome,
+    hero:fmt(cadastrou),
+    heroSub:"passageiros cadastrados",
+    voltar:{label:"Todos os controladores", abrir:openRankOverlay},
+    sections:[
+      {h:"Números", rows:[
+        ["Equipe", equipe],
+        ["Pilotos sob coordenação", fmt(pilotos)],
+        ["Cadastrou", fmt(cadastrou)],
+        ["Média por piloto", pilotos ? (cadastrou/pilotos).toLocaleString("pt-BR",{maximumFractionDigits:1}) : "—"],
+        ["Do que já entrou", pct(cadastrou, soma) + "%"]
+      ]},
+      {h:"Como ler este número", p:[
+        "Conta os passageiros cadastrados pelos pilotos que estão sob este controlador hoje.",
+        "Piloto muda de controlador. Quem tem o piloto agora leva o cadastro que outro pode ter feito — isto mede posse do registro, não necessariamente o trabalho."
+      ]},
+      (pilotos > 0 && cadastrou === 0)
+        ? {warn:"Tem " + fmt(pilotos) + " pilotos sob coordenação e nenhum cadastro. Vale checar se os pilotos foram atribuídos e nunca trabalhados."}
+        : (pilotos > 200
+          ? {warn:"Tem " + fmt(pilotos) + " pilotos — muito acima da média. Volume assim costuma vir de importação em lote, não de captação."}
+          : null)
+    ]
+  });
+}
+
+function openDimOverlay(){
+  const dim = DIMENSOES[dimensao];
+  const itens = (dim.itens || DESTINOS).slice().sort((a,b) => b.n - a.n);
+  const total = itens.reduce((a,d) => a + d.n, 0);
+  const pilotos = itens.reduce((a,d) => a + d.pilotos, 0);
+
+  const ordemFam = ["p40","p20","com","emb","bairro","parceiro","prof","sem"];
+  const porFam = {};
+  itens.forEach(d => { porFam[d.fam] = (porFam[d.fam] || 0) + d.n; });
+
+  const cabeca = el("div");
+  const comp = el("div","composicao"), leg = el("div","legenda");
+  ordemFam.forEach(f => {
+    if (!porFam[f]) return;
+    const cor = css(FAMILIAS[f].cor);
+    const seg = document.createElement("span");
+    seg.style.flex = porFam[f]; seg.style.background = cor;
+    seg.title = FAMILIAS[f].nome + ": " + fmt(porFam[f]);
+    comp.append(seg);
+    const item = document.createElement("span");
+    const ic = document.createElement("i"); ic.style.background = cor;
+    const vb = document.createElement("b"); vb.textContent = pct(porFam[f], total) + "%";
+    item.append(ic, document.createTextNode(FAMILIAS[f].nome), vb);
+    leg.append(item);
+  });
+  cabeca.append(comp, leg);
+
+  const wrap = el("div","rank");
+  wrap.prepend(cabeca);
+  const table = document.createElement("table");
+  const thead = document.createElement("thead");
+  const htr = document.createElement("tr");
+  ["#","Recorte","Pilotos","Trouxe","Por piloto","%"].forEach((t,i) => {
+    const th = document.createElement("th");
+    if (i >= 2) th.className = "n";
+    th.textContent = t; htr.append(th);
+  });
+  thead.append(htr); table.append(thead);
+  const tb = document.createElement("tbody");
+  itens.forEach((d,i) => {
+    const tr = document.createElement("tr");
+    if (d.n === 0) tr.className = "zero";
+    if (i === 0) tr.classList.add("topo");
+    const porPiloto = d.pilotos ? d.n/d.pilotos : null;
+    const cels = [String(i+1).padStart(2,"0"), d.name, fmt(d.pilotos), fmt(d.n),
+      porPiloto === null ? "—" : porPiloto.toLocaleString("pt-BR",{maximumFractionDigits:1}),
+      pct(d.n, total) + "%"];
+    cels.forEach((v,j) => {
+      const td = document.createElement("td");
+      if (j >= 2) td.className = "n";
+      if (j === 0) td.className = "pos";
+      td.textContent = v; tr.append(td);
+    });
+    tb.append(tr);
+  });
+  table.append(tb); wrap.append(table);
+
+  const cadeia = {
+    equipe: "Equipe do controlador → pilotos ligados a ele → passageiros que cada piloto cadastrou.",
+    cidade: "Cidade do piloto → passageiros que ele cadastrou. É o recorte de cobertura quase total, porque quase todo piloto tem cidade preenchida.",
+    plano:  "A meta do piloto é o plano dele: 40 ou 20 cadastros. Conta os passageiros que ele cadastrou, EXCLUINDO quem já é piloto ou controlador — senão a mesma pessoa valeria duas vezes.",
+    regiao: "Região marcada no piloto → passageiros que ele cadastrou. Poucos pilotos têm região marcada.",
+    time:   "O time do piloto → passageiros ativos que ele cadastrou. Cobre todos os contabilizados: piloto sem time cai em “Sem time”."
+  }[dimensao];
+
+  const produtivos = itens.filter(d => d.pilotos >= 5 && d.n > 0)
+    .sort((a,b) => (b.n/b.pilotos) - (a.n/a.pilotos));
+  const melhor = produtivos[0], pior = produtivos[produtivos.length-1];
+
+  openOverlay({
+    eyebrow:"Recorte · " + dim.sub,
+    title:dim.nome,
+    hero:fmt(total),
+    heroSub:"passageiros neste recorte",
+    viz:wrap,
+    sections:[
+      {h:"Produção por piloto", p:[
+        "A coluna que não cabe na lateral. No conjunto são " + fmt(pilotos) + " pilotos para " +
+        fmt(total) + " pessoas — " +
+        (pilotos ? (total/pilotos).toLocaleString("pt-BR",{maximumFractionDigits:1}) : "—") + " por piloto.",
+        (melhor && pior && melhor !== pior)
+          ? "Do mais ao menos produtivo: " + melhor.name + " traz " +
+            (melhor.n/melhor.pilotos).toLocaleString("pt-BR",{maximumFractionDigits:1}) +
+            " por piloto e " + pior.name + " traz " +
+            (pior.n/pior.pilotos).toLocaleString("pt-BR",{maximumFractionDigits:1}) +
+            ". Volume alto não é o mesmo que produtividade alta."
+          : ""
+      ].filter(Boolean)},
+      {h:"Como este recorte é apurado", p:[cadeia]},
+      {warn:"Este recorte cobre " + pct(total, PAINEL.contabilizados) + "% dos " +
+        fmt(PAINEL.contabilizados) + " contabilizados. Os recortes decompõem os passageiros — não as quatro fontes de cadastro. Comparar recortes de coberturas diferentes leva a conclusão errada."}
+    ]
+  });
+}
+
+function openRankOverlay(){
+  const lista = CONTROLADORES.slice().sort((a,b) => b[3] - a[3]);
+  const soma = lista.reduce((a,c) => a + c[3], 0);
+  const wrap = el("div","rank");
+  const table = document.createElement("table");
+  const thead = document.createElement("thead");
+  const htr = document.createElement("tr");
+  ["#","Controlador","Equipe","Pilotos","Cadastrou","%"].forEach((t,i) => {
+    const th = document.createElement("th");
+    if (i >= 3) th.className = "n";
+    th.textContent = t; htr.append(th);
+  });
+  thead.append(htr); table.append(thead);
+  const tb = document.createElement("tbody");
+  lista.forEach((c,i) => {
+    const tr = document.createElement("tr");
+    if (c[3] === 0) tr.className = "zero";
+    if (i === 0) tr.classList.add("topo");
+    tr.classList.add("clicavel");
+    tr.tabIndex = 0;
+    tr.setAttribute("role","button");
+    tr.setAttribute("aria-label","Detalhe de " + c[0]);
+    const abrir = () => openCtrlOverlay(c, i+1, soma);
+    tr.addEventListener("click", abrir);
+    tr.addEventListener("keydown", e => {
+      if (e.key === "Enter" || e.key === " "){ e.preventDefault(); abrir(); }
+    });
+    const cells =[String(i+1).padStart(2,"0"), c[0], c[1], fmt(c[2]), fmt(c[3]),
+                   soma ? pct(c[3], soma) + "%" : "—"];
+    cells.forEach((v,j) => {
+      const td = document.createElement("td");
+      if (j >= 3) td.className = "n";
+      if (j === 0) td.className = "pos";
+      if (j === 2) td.className = "equipe";
+      td.textContent = v; tr.append(td);
+    });
+    tb.append(tr);
+  });
+  table.append(tb); wrap.append(table);
+
+  openOverlay({
+    eyebrow:"Do que mais cadastrou ao que menos",
+    title:"Todos os controladores",
+    hero:fmt(CTRL_TOTAL),
+    heroSub:"controladores ativos",
+    viz:wrap,
+    sections:[
+      {h:"O que a lista mostra", p:[
+        "Clique numa linha para abrir o controlador.",
+        "Os " + fmt(lista.length) + " controladores que têm piloto sob responsabilidade, do maior para o menor. Outros " +
+        fmt(CTRL_ZERO_SEM_PILOTO) + " estão ativos sem nenhum piloto e sem cadastro — incluindo " + fmt(PAINEL.contasTeste) + " contas de teste.",
+        "O primeiro colocado sozinho responde por " + pct(lista[0][3], soma) + "% de tudo que entrou."
+      ]},
+      {warn:"Piloto muda de controlador — foram " + fmt(PAINEL.transferencias) + " transferências no período. O ranking mede quem tem o registro hoje, não quem fez o trabalho. Não use isoladamente para avaliar pessoa."}
+    ]
+  });
+}
+
+function openIssueOverlay(i){
+  openOverlay({
+    eyebrow:"Ponto de atenção " + i.n,
+    title:i.t,
+    sections:[{p:i.p}, i.warn ? {warn:i.warn} : null, i.link ? {link:i.link} : null]
+  });
+}
+
+$("#ver-todos").addEventListener("click", openRankOverlay);
+$("#pista-svg").addEventListener("click", openPistaOverlay);
+$("#pista-svg").addEventListener("keydown", e => {
+  if (e.key === "Enter" || e.key === " "){ e.preventDefault(); openPistaOverlay(); }
+});
+document.querySelectorAll("[data-dimensao]").forEach(b =>
+  b.addEventListener("click", () => {
+    dimensao = b.dataset.dimensao;
+    render();                 
+    openDimOverlay();
+  }));
+$("#issues-count").addEventListener("click", () => openIssueOverlay(ISSUES[0]));
+
+const FAMILIAS = {
+  p40:      {cor:"--s1", icone:"pin",   nome:"Plano 40"},
+  p20:      {cor:"--s3", icone:"pin",   nome:"Plano 20"},
+  com:      {cor:"--s2", icone:"users", nome:"Comunidade"},
+  emb:      {cor:"--s2", icone:"trend", nome:"Embaixador"},
+  bairro:   {cor:"--s1", icone:"pin",   nome:"Bairros"},
+  prof:     {cor:"--s2", icone:"trend", nome:"Profissional"},
+  parceiro: {cor:"--s3", icone:"users", nome:"Parceiros"},
+  sem:      {cor:"--s4", icone:"dash",  nome:"Sem grupo"}
+};
+const DESTINOS = EQUIPES.map(f => ({name:f.nome, fam:f.fam, n:f.n, pilotos:f.pilotos, nota:f.nota}));
+const TOTAL_EQUIPES = EQUIPES.reduce((a,f) => a + f.n, 0);
+const ICONES = {
+  form:"M4.5 1.8h7v12.4h-7zM6.6 4.8h2.8M6.6 7.6h2.8M6.6 10.4h2.8",
+  pin:"M8 1.8c-2.3 0-4.2 1.9-4.2 4.2 0 3 4.2 8 4.2 8s4.2-5 4.2-8c0-2.3-1.9-4.2-4.2-4.2z",
+  users:"M6 7.6a2.3 2.3 0 100-4.6 2.3 2.3 0 000 4.6zM1.8 13.4c0-2.3 1.9-3.7 4.2-3.7s4.2 1.4 4.2 3.7M11.2 3.5a2.2 2.2 0 010 4.2",
+  trend:"M2 11.5l3.6-3.6 2.4 2.4L14 4.2M10.6 4.2H14v3.4",
+  dash:"M3.5 8h9"
+};
+function icone(nome, cor){
+  const g = svg("svg",{viewBox:"0 0 16 16",width:14,height:14,fill:"none",stroke:cor,
+    "stroke-width":1.9,"stroke-linecap":"round","stroke-linejoin":"round",class:"ico"});
+  g.append(svg("path",{d:ICONES[nome]}));
+  if (nome === "pin") g.append(svg("circle",{cx:8,cy:6,r:1.6,fill:cor,stroke:"none"}));
+  return g;
+}
+
+function linhaHub(o){
+  const b = el("button","spoke" + (o.dest ? " dest" : "") + (o.value === null ? " na" : ""));
+  b.type = "button";
+  b.dataset.cor = o.cor;
+  b.append(icone(o.icone, o.cor));
+  const nm = el("span","sn"); nm.textContent = o.name;
+  if (o.sub){ const sm = document.createElement("small"); sm.textContent = o.sub; nm.append(sm); }
+  b.append(nm);
+  const v = el("span","sv" + (o.value === null ? " na" : ""));
+  v.textContent = o.value === null ? "—" : fmt(o.value);
+  b.append(v);
+  bindTip(b,{
+    value: o.value === null ? "—" : fmt(o.value),
+    label: o.name,
+    rows: [{color:o.cor, text:o.tip}],
+    hint:"Clique para abrir a origem"
+  });
+  b.addEventListener("click", o.open);
+  return b;
+}
+
+function drawHub(){
+  
+  const total = PAINEL.temos;
+
+  const boxE = $("#spokes-e");
+  boxE.textContent = "";
+  PAINEL.passageiros.forEach(f => boxE.append(linhaHub({
+    name:f.nome, sub:f.sub, value:f.n, cor:css("--s1"), icone:f.icone,
+    tip:pct(f.n, total) + "% dos contabilizados",
+    open:() => openPassageiroOverlay(f)
+  })));
+  $("#head-e").textContent = fmt(total) + " contabilizados · cada passageiro no seu papel mais alto";
+
+  const VISIVEIS = 11;
+  const ordenadas = DESTINOS.filter(d => !d.nota).sort((a,b) => b.n - a.n);
+  const cauda = ordenadas.slice(VISIVEIS).concat(DESTINOS.filter(d => d.nota));
+  const esquerda = ordenadas.slice(0, VISIVEIS);
+  if (cauda.length){
+    esquerda.push({name:"Outras equipes", fam:"sem", nota:"cauda somada",
+      n:cauda.reduce((a,d) => a + d.n, 0), pilotos:cauda.reduce((a,d) => a + d.pilotos, 0)});
+  }
+  const boxL = $("#spokes-l");
+  boxL.textContent = "";
+  esquerda.forEach(d => {
+    const f = FAMILIAS[d.fam];
+    boxL.append(linhaHub({
+      name:d.name, dest:true, value:d.n, cor:css(f.cor), icone:f.icone,
+      tip:pct(d.n, TOTAL_EQUIPES) + "% do que já entrou · " + f.nome,
+      open:() => openEquipeOverlay(d)
+    }));
+  });
+  $("#head-l").textContent = "equipe do controlador";
+
+  const boxR = $("#spokes-r");
+  boxR.textContent = "";
+  TIMES_ORDEM.forEach(d => {
+    const f = FAMILIAS[d.fam];
+    boxR.append(linhaHub({
+      name:d.name, dest:true, value:d.n, cor:css(f.cor), icone:f.icone,
+      tip:"Expectativa Real " + (d.lanc ? fmt(d.ex) : "—") + " · " + fmt(d.pilotos) + " pilotos · "
+        + (d.lanc && d.ex ? Math.round(100*d.n/d.ex) + "% cumprido" : "ninguém lançou"),
+      open:() => openTimeOverlay(d)
+    }));
+  });
+  $("#head-r").textContent = "times do clube";
+
+  const ring = $("#corering");
+  ring.textContent = "";
+  const parado = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const r = 74, C = 2*Math.PI*r, rTanque = 65;
+  const temMeta = meta && meta > 0;
+  const ratio = temMeta ? Math.min(total/meta, 1) : 0;
+  const falta = temMeta ? Math.max(meta - total, 0) : null;
+
+  const ratioPrev = temMeta ? Math.min(falta / meta, 1) : 0;
+
+  ring.append(svg("circle",{cx:75,cy:75,r:r,fill:"none",stroke:css("--track"),"stroke-width":10}));
+  if (ratioPrev > 0){
+    ring.append(svg("circle",{cx:75,cy:75,r:r,fill:"none",stroke:css("--s2"),"stroke-width":10,
+      opacity:.55,"stroke-dasharray":(ratioPrev*C) + " " + C,
+      "stroke-dashoffset":-(ratio*C),transform:"rotate(-90 75 75)"}));
+  }
+  if (ratio > 0){
+    ring.append(svg("circle",{cx:75,cy:75,r:r,fill:"none",stroke:css("--s1"),"stroke-width":10,
+      "stroke-linecap":"round","stroke-dasharray":(ratio*C) + " " + C,transform:"rotate(-90 75 75)"}));
+  }
+
+  const defs = svg("defs");
+  const cpC = svg("clipPath",{id:"tanque"});
+  cpC.append(svg("circle",{cx:75,cy:75,r:rTanque}));
+  const cpE = svg("clipPath",{id:"tanque-esq"});
+  cpE.append(svg("rect",{x:0,y:0,width:75,height:150}));
+  const cpD = svg("clipPath",{id:"tanque-dir"});
+  cpD.append(svg("rect",{x:75,y:0,width:75,height:150}));
+  defs.append(cpC, cpE, cpD); ring.append(defs);
+
+  ring.append(svg("circle",{cx:75,cy:75,r:rTanque,fill:css("--bg"),opacity:.35}));
+
+  function liquido(nivelRatio, cor, clip, inverte){
+    if (nivelRatio <= 0) return;
+    const topo = (75 + rTanque) - (2*rTanque)*nivelRatio;
+    const tanque = svg("g",{"clip-path":"url(#tanque)"});
+    const lado = svg("g",{"clip-path":"url(#" + clip + ")"});
+    const nivel = svg("g",{transform:"translate(0 " + topo.toFixed(1) + ")"});
+    [{amp:7, op:.30, dur:"5.2s", de:"0 0",  para:"75 0"},
+     {amp:5, op:.55, dur:"3.6s", de:"75 0", para:"0 0"}].forEach(o => {
+      const onda = svg("path",{d:ondaD(o.amp), fill:cor, opacity:o.op});
+      if (!parado) onda.append(svg("animateTransform",{attributeName:"transform",
+        type:"translate", from: inverte ? o.para : o.de, to: inverte ? o.de : o.para,
+        dur:o.dur, repeatCount:"indefinite"}));
+      nivel.append(onda);
+    });
+    
+    const sup = svg("path",{d:ondaD(5), fill:"none", stroke:cor, "stroke-width":2, opacity:1});
+    if (!parado) sup.append(svg("animateTransform",{attributeName:"transform",
+      type:"translate", from: inverte ? "0 0" : "75 0", to: inverte ? "75 0" : "0 0",
+      dur:"3.6s", repeatCount:"indefinite"}));
+    nivel.append(sup);
+    lado.append(nivel); tanque.append(lado); ring.append(tanque);
+  }
+  liquido(ratioPrev, css("--s2"), "tanque-esq", true);
+  liquido(ratio, css("--s1"), "tanque-dir", false);
+
+  ring.append(svg("line",{x1:75,y1:75-rTanque,x2:75,y2:75+rTanque,stroke:css("--fluxo"),
+    "stroke-width":4,opacity:.18}));
+  ring.append(svg("line",{x1:75,y1:75-rTanque,x2:75,y2:75+rTanque,stroke:css("--fluxo"),
+    "stroke-width":1.2,opacity:.9}));
+
+  $("#core-lab").textContent = temMeta ? "Meta " + fmt(meta) : "Total consolidado";
+  $("#core-val").textContent = fmt(total);
+  $("#core-prev").textContent = temMeta ? fmt(falta) : "—";
+  $("#core-sub").textContent = !temMeta
+    ? "defina uma meta"
+    : falta > 0
+      ? Math.round(100*total/meta) + "% cumprido da real"
+      : "meta batida · " + fmt(total - meta) + " acima";
+  $("#meta-state").textContent = meta === PAINEL.meta
+    ? "Expectativa Real · " + fmt(PAINEL.pilotosComLinha) + " de " + fmt(PAINEL.pilotosNoAr) + " pilotos lançaram"
+    : (meta && meta > 0) ? "valor simulado, não vem da base" : "sem meta: o balão fica vazio";
+  $("#hub-hint").textContent = "Expectativa Real × Contabilizados. No balão, a previsão "
+    + "que falta entrar (laranja) desce enquanto o que já temos (azul) sobe.";
+  $("#hub-foot").textContent = cumpridoDaReal() + " cumprido da real · faltam "
+    + fmt(PAINEL.faltam) + " · previsão " + fmt(PAINEL.temos + PAINEL.meta);
+
+  drawHubLines();
+  requestAnimationFrame(drawHubLines);
+}
+
+function drawHubLines(){
+  const grid = $("#hubgrid"), lines = $("#hublines"), core = $("#core");
+  if (!grid || !core) return;
+  const gr = grid.getBoundingClientRect();
+  if (!gr.width) return;
+  lines.setAttribute("viewBox","0 0 " + gr.width + " " + gr.height);
+  lines.textContent = "";
+  const cr = core.getBoundingClientRect();
+  const cx = cr.left - gr.left + cr.width/2, cy = cr.top - gr.top + cr.height/2, R = cr.width/2;
+  const parado = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let nLinha = 0;
+
+  grid.querySelectorAll(".spoke").forEach(sp => {
+    const sr = sp.getBoundingClientRect();
+    const lado = sp.closest("[data-side]").dataset.side;
+    let d, x0, y0, xf, yf;
+    if (lado === "baixo"){
+      
+      x0 = sr.left - gr.left + sr.width/2;
+      y0 = sr.top - gr.top;
+      const ang = Math.atan2(y0 - cy, x0 - cx);
+      const ex = cx + Math.cos(ang)*(R+2), ey = cy + Math.sin(ang)*(R+2);
+      const my = (y0 + ey)/2;
+      xf = ex; yf = ey;
+      d = "M " + x0 + " " + y0 + " C " + x0 + " " + my + ", " + ex + " " + my + ", " + ex + " " + ey;
+    } else {
+      const esq = lado === "left";
+      const sx = (esq ? sr.right : sr.left) - gr.left;
+      const sy = sr.top - gr.top + sr.height/2;
+      const ang = Math.atan2(sy - cy, sx - cx);
+      const ex = cx + Math.cos(ang)*(R+2), ey = cy + Math.sin(ang)*(R+2);
+      
+      x0 = sx; y0 = sy;
+      xf = ex; yf = ey;
+      const mx = (sx + ex)/2;
+      d = "M " + sx + " " + sy + " C " + mx + " " + sy + ", " + mx + " " + ey + ", " + ex + " " + ey;
+    }
+    const cor = sp.dataset.cor || css("--ink-3");
+    const vazio = sp.classList.contains("na");
+    const fluxo = css("--fluxo");
+
+    [[9, .08], [5, .15]].forEach(par =>
+      lines.append(svg("path",{d:d, fill:"none", stroke:cor,
+        "stroke-width":par[0], opacity:par[1], "stroke-linecap":"round"})));
+
+    const cabo = svg("path",{d:d, fill:"none", stroke:cor, "stroke-linecap":"round",
+      "stroke-width": vazio ? 1.2 : 1.7, opacity: vazio ? .5 : .78});
+    if (vazio) cabo.setAttribute("stroke-dasharray","3 4");
+    lines.append(cabo);
+    lines.append(svg("circle",{cx:x0,cy:y0,r:vazio?2:3,fill:cor,opacity:vazio?.7:1}));
+
+    if (!parado){
+      const passo = 44, luz = 13;   
+      const atraso = (-(nLinha * 0.19)).toFixed(2) + "s";
+      const acende = no => {
+        no.append(svg("animate",{attributeName:"stroke-dashoffset",
+          values:"0;" + (-passo), dur:"1.3s", begin:atraso, repeatCount:"indefinite"}));
+        lines.append(no);
+      };
+
+      acende(svg("path",{d:d, fill:"none", stroke:cor, "stroke-width":6,
+        "stroke-linecap":"round", "stroke-dasharray":luz + " " + (passo - luz),
+        "stroke-dashoffset":0, opacity:.42}));
+
+      acende(svg("path",{d:d, fill:"none", stroke:fluxo, "stroke-width":2,
+        "stroke-linecap":"round", "stroke-dasharray":luz + " " + (passo - luz),
+        "stroke-dashoffset":0, opacity:.95}));
+
+      if (xf !== undefined){
+        const onda = svg("circle",{cx:xf, cy:yf, r:2, fill:"none", stroke:fluxo, "stroke-width":1.8});
+        onda.append(svg("animate",{attributeName:"r", values:"1.5;9",
+          dur:"1.3s", begin:atraso, repeatCount:"indefinite"}));
+        onda.append(svg("animate",{attributeName:"opacity", values:".9;0",
+          dur:"1.3s", begin:atraso, repeatCount:"indefinite"}));
+        lines.append(onda);
+      }
+      nLinha++;
+    }
+  });
+}
+
+function render(){
+  const ok = group === "Todos";
+  const c1 = css("--s1");
+
+  $("#scope-tag").textContent = group;
+  $("#scope-reset").hidden = ok;
+  $("#issues-count").textContent = ISSUES.length + " pontos de atenção";
+
+  const status = $("#status");
+  status.textContent = "";
+  if (!ok){
+    const n = el("div","note");
+    const s = document.createElement("strong"); s.textContent = group;
+    n.append(s, document.createTextNode(" · dados por grupo ainda não verificados. “—” significa indisponível, não zero."));
+    status.append(n);
+  }
+
+  const cards = [
+    {k:"Devemos ter", value: PAINEL.pilotosComLinha > 0 ? fmt(PAINEL.meta) : "—",
+     sub:"Expectativa Real", onOpen:openMetaOverlay},
+    {k:"Faltam", value:fmt(PAINEL.faltam),
+     sub:"para a Expectativa Real", onOpen:openMetaOverlay},
+    {k:"Previsão", value:fmt(PAINEL.temos + PAINEL.meta),
+     sub:"contabilizados + real", onOpen:openMetaOverlay},
+    {k:"Projetada", value:fmt(PAINEL.projetada),
+     sub:"soma das metas", onOpen:openMetaOverlay},
+    {k:"Bateram a meta", value:fmt(PAINEL.pilotosQueBateram),
+     sub:"de " + fmt(PAINEL.pilotosLancaram) + " que lançaram", onOpen:openMetaOverlay},
+    {k:"Sem confirmação", value:fmt(PAINEL.semConfirmacao),
+     sub:"de " + fmt(PAINEL.temos) + " contabilizados", onOpen:() => openIssueOverlay(ISSUES[1])}
+  ];
+
+  const stats = $("#stats");
+  stats.textContent = "";
+
+  const gc = el("button","stat gaugecard"); gc.type = "button";
+  const gsvg = svg("svg",{class:"gauge", id:"gauge", role:"img"});
+  const gtx = el("span","gtext");
+  const gk = el("span","k"); gk.id = "gauge-title";
+  const gv = el("span","v"); gv.id = "gauge-num";
+  const gs = el("span","s"); gs.id = "gauge-base";
+  gtx.append(gk,gv,gs);
+  gc.append(gsvg,gtx);
+  bindTip(gc, () => ({
+    value: ok ? fmt(PAINEL.temos) : "—",
+    label: "Já temos · Contabilizados",
+    rows: [{color:c1, text: ok
+      ? cumpridoDaReal() + " cumprido da Expectativa Real de " + fmt(PAINEL.meta)
+      : "contagem não verificada"}],
+    hint:"Clique para ver contabilizados e pessoas na base"
+  }));
+  gc.addEventListener("click", () => ok ? openTemosOverlay() : openGroupOverlay(group));
+  stats.append(gc);
+
+  cards.forEach((c,i) => {
+    const b = el("button","stat");
+    b.type = "button";
+    const k = el("span","k"); k.textContent = c.k;
+    const v = el("span","v"); v.textContent = ok ? c.value : "—";
+    const s = el("span","s"); s.textContent = ok ? c.sub : "não verificado";
+    b.append(k,v,s);
+    bindTip(b,{value: ok ? c.value : "—", label:c.k,
+      rows:[{color: c1, text: ok ? c.sub : "contagem não verificada"}],
+      hint:"Clique para abrir a origem do número"});
+    b.addEventListener("click", () => ok ? c.onOpen() : openGroupOverlay(group));
+    stats.append(b);
+  });
+
+  const dim = DIMENSOES[dimensao];
+  const totalDim = (dim.itens || DESTINOS).reduce((a,d) => a + d.n, 0);
+
+  document.querySelectorAll("[data-dimensao]").forEach(b =>
+    b.setAttribute("aria-pressed", String(b.dataset.dimensao === dimensao)));
+  $("#dim-titulo").textContent = dim.nome;
+  $("#cobertura").textContent = "";
+  $("#cobertura").append(document.createTextNode(dim.sub + " · cobre "));
+  const cb2 = document.createElement("b");
+  cb2.textContent = pct(totalDim, PAINEL.contabilizados) + "%";
+  $("#cobertura").append(cb2,
+    document.createTextNode(" dos " + fmt(PAINEL.contabilizados) +
+      " contabilizados. Clique num recorte para abrir."));
+
+  const comCadastro = CONTROLADORES.filter(c => c[3] > 0);
+  $("#ctrl-count").textContent = fmt(CTRL_TOTAL) + " ativos";
+  $("#ctrl-resto").textContent = fmt(comCadastro.length) + " cadastraram alguém · "
+    + fmt(CTRL_TOTAL - comCadastro.length) + " estão em zero";
+  const topo3 = $("#ctrl-top");
+  topo3.textContent = "";
+  CONTROLADORES.slice().sort((a,b) => b[3] - a[3]).slice(0,3).forEach((c,i) => {
+    const row = el("span","cm-row" + (i === 0 ? " topo" : ""));
+    const ix = el("span","i"); ix.textContent = String(i+1).padStart(2,"0");
+    const nm = el("span","nm"); nm.textContent = c[0];
+    const fr = document.createElement("small"); fr.textContent = c[1]; nm.append(fr);
+    const v = el("span","v"); v.textContent = ok ? fmt(c[3]) : "—";
+    row.append(ix, nm, v); topo3.append(row);
+  });
+
+  drawGauge();
+  drawRota();
+  drawPista();
+  drawHub();
+}
+
+$("#scope-reset").addEventListener("click", () => { group = "Todos"; render(); });
+
+const issues = $("#issues");
+ISSUES.forEach(i => {
+  const b = el("button","issue"); b.type = "button";
+  const idx = el("span","idx"); idx.textContent = i.n;
+  const t = el("span","t"); t.textContent = i.t;
+  b.append(idx,t);
+  bindTip(b,{value:"Ponto " + i.n, label:i.d, hint:"Clique para abrir o detalhe"});
+  b.addEventListener("click", () => openIssueOverlay(i));
+  issues.append(b);
+});
+
+$("#meta").value = PAINEL.meta;
+$("#meta").addEventListener("input", e => {
+  const v = parseInt(e.target.value, 10);
+  meta = Number.isFinite(v) && v > 0 ? v : null;
+  render();
+});
+
+$("#core").addEventListener("click", openMetaOverlay);
+
+$("#retrato-data").textContent = LIDO_AS.split(" ")[0];
+
+const autoBtn = $("#auto");
+autoBtn.className = "hubstate on";
+$("#auto-txt").textContent = "Dados fictícios · retrato de " + LIDO_AS;
+autoBtn.addEventListener("click", () => openOverlay({
+  eyebrow:"Sobre esta demonstração",
+  title:"Todos os dados são fictícios",
+  sections:[
+    {p:[
+      "Nomes, equipes, times, cidades e números foram gerados por scripts/gerar-dados.mjs, com semente fixa. Qualquer semelhança com pessoas ou lugares reais é coincidência.",
+      "Os números são derivados uns dos outros para que o painel feche as mesmas contas que mostra: as equipes somam o que os controladores cadastraram, os times somam os totais do balão, a caixa de fontes soma o “já temos”.",
+      "Num uso real, um processo agendado reescreveria só o bloco de dados deste arquivo, e a página se recarregaria logo depois de cada gravação."
+    ]}
+  ]
+}));
+
+const themeBtn = $("#theme");
+themeBtn.addEventListener("click", () => {
+  const dark = document.documentElement.getAttribute("data-theme") === "dark";
+  document.documentElement.setAttribute("data-theme", dark ? "light" : "dark");
+  themeBtn.textContent = dark ? "Escuro" : "Claro";
+  render();
+});
+
+let rt;
+addEventListener("resize", () => {
+  clearTimeout(rt);
+  rt = setTimeout(() => { drawGauge(); drawRota(); drawPista(); drawHubLines(); }, 120);
+});
+addEventListener("scroll", hideTip, true);
+
+render();
+
+})();
+</script>
+</body>
+</html>
